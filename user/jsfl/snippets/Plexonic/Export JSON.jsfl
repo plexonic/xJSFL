@@ -229,7 +229,7 @@ function getElementType(element) {
 
 (function () {
     xjsfl.init(this);
-    var elements = $$(':selected').elements;
+    var elements = $$("ext_*").elements;
     var structurizer = new JsonStructurizer();
     structurizer.structurize(elements);
     structurizer.saveStructure();

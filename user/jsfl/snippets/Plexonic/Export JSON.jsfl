@@ -12,8 +12,6 @@
  */
 
 
-
-
 JsonStructurizer = function () {
 };
 
@@ -31,13 +29,13 @@ $p.structureJson = "";
 
 
 $p.structurize = function (selectedItems) {
-    var obj = {};
+    var documentMetadata = {};
     for each (var item in selectedItems) {
-        var itemJson = [];
-        obj[item.itemName] = itemJson;
-        $p.crateMovieClipMetadata(item, itemJson);
+        var itemMetadata = [];
+        documentMetadata[item.itemName] = itemMetadata;
+        $p.crateMovieClipMetadata(item, itemMetadata);
     }
-    $p.structureJson = JSON.encode(obj);
+    $p.structureJson = JSON.encode(documentMetadata);
 };
 
 
@@ -51,7 +49,7 @@ $p.getJsonUri = function () {
     return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
 };
 
-$p.crateMovieClipMetadata = function (item, obj) {
+$p.crateMovieClipMetadata = function (item, metadata) {
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
         //skipping guide layers!
@@ -65,48 +63,83 @@ $p.crateMovieClipMetadata = function (item, obj) {
                 for (var k = 0; k < elements.length; k++) {
                     var element = elements[k];
                     // do something with element
-                    $p.crateElementMetadata(element, obj);
+                    $p.crateElementMetadata(element, metadata);
                 }
             }
         }
     }
-    return obj;
+    return metadata;
 };
 
-$p.crateElementMetadata = function (element, obj) {
+$p.crateElementMetadata = function (element, metadata) {
     var elementMetadata = $p.crateElementGenericMetadata(element);
+    var elementName = "";
+    var elementKind = "";
+    var customMetadataSetter = null;
     switch (getElementType(element)) {
         case ELEMENT_TYPE_BITMAP:
-            elementMetadata.kind = "image";
-            elementMetadata.name = element.libraryItem.itemName;
+            elementName = element.libraryItem.itemName;
+            elementKind = "image";
             break;
         case ELEMENT_TYPE_SYMBOL:
-            elementMetadata.kind = "sprite";
-            elementMetadata.name = element.name;
-            elementMetadata.children = $p.crateMovieClipMetadata(element.libraryItem, []);
+            elementName = element.name;
+            elementKind = "sprite";
+            customMetadataSetter = $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
-            elementMetadata.kind = "text";
-            elementMetadata.name = element.name;
-            $p.setTextFieldSpecificMetadata(element, elementMetadata);
+            elementName = element.name;
+            elementKind = "text";
+            customMetadataSetter = $p.textFieldCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_SHAPE:
-            elementMetadata.kind = "quad";
-            elementMetadata.name = element.name;
-            elementMetadata.color = element.contours[1].fill.color;
-            elementMetadata.width = element.width;
-            elementMetadata.height = element.height;
+            elementName = element.name;
+            elementKind = "quad";
+            customMetadataSetter = $p.shapeCustomMetadataSetter;
             break;
         default:
             inspect(element);
             break;
     }
-    obj.push(elementMetadata);
+
+    $p.setElementSpecificMetadata(elementName, elementKind, element, elementMetadata, customMetadataSetter);
+    metadata.push(elementMetadata);
 };
 
-$p.setTextFieldSpecificMetadata = function (element, elementMetadata) {
+$p.setElementSpecificMetadata = function (name, kind, element, elementMetadata, customMetadataSetter) {
+    $p.setElementNameAndKind(name, kind, elementMetadata);
+    if (customMetadataSetter) {
+        customMetadataSetter(element, elementMetadata);
+    }
+};
+
+$p.shapeCustomMetadataSetter = function (element, elementMetadata) {
+    elementMetadata.color = $p.formatColor(element.contours[1].fill.color);
+    elementMetadata.x = element.left;
+    elementMetadata.y = element.top;
+    $p.setElementWidthAndHeightMetadata(element, elementMetadata);
+};
+
+$p.formatColor = function (colorString) {
+    return "0x" + colorString.substr(1, 6);
+};
+
+$p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {
     elementMetadata.width = element.width;
     elementMetadata.height = element.height;
+};
+
+$p.symbolCustomMetadataSetter = function (element, elementMetadata) {
+    elementMetadata.alpha = element.colorAlphaPercent * .01;
+    elementMetadata.children = $p.crateMovieClipMetadata(element.libraryItem, []);
+};
+
+$p.setElementNameAndKind = function (name, kind, elementMetadata) {
+    elementMetadata.name = name;
+    elementMetadata.kind = kind;
+};
+
+$p.textFieldCustomMetadataSetter = function (element, elementMetadata) {
+    $p.setElementWidthAndHeightMetadata(element, elementMetadata);
     var textRun = element.textRuns[0];
     elementMetadata.characters = textRun.characters;
     var textAttrs = textRun.textAttrs;
@@ -117,27 +150,44 @@ $p.setTextFieldSpecificMetadata = function (element, elementMetadata) {
 
 $p.setTextFieldFiltersMetadata = function (filters, elementMetadata) {
     var filtersMetadata = [];
+
     for (var i = 0; i < filters.length; ++i) {
         var filter = filters[i];
+        inspect(filter);
         filtersMetadata.push({
             name: filter.name,
             angle: filter.angle,
             blurX: filter.blurX,
             blurY: filter.blurY,
             distance: filter.distance,
-            color: filter.color,
-            quality: filter.quality,
-            strength: filter.strength
+            color: $p.formatColor(filter.color),
+            quality: $p.formatFilterQuality(filter.quality),
+            strength: filter.strength * .01
         });
     }
     elementMetadata.filters = filtersMetadata;
+};
+
+$p.formatFilterQuality = function (quality) {
+    switch (quality) {
+        case "low":
+            return 1;
+            break;
+        case "medium":
+            return 2;
+            break;
+        case "high":
+            return 3;
+            break;
+    }
+    return 3;
 };
 
 $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
     elementMetadata.bold = textAttrs.bold;
     elementMetadata.italic = textAttrs.italic;
     elementMetadata.fontFamily = textAttrs.face;
-    elementMetadata.color = textAttrs.fillColor;
+    elementMetadata.color = $p.formatColor(textAttrs.fillColor);
     elementMetadata.size = textAttrs.size;
     elementMetadata.alignment = textAttrs.alignment;
 };
@@ -150,7 +200,7 @@ $p.crateElementGenericMetadata = function (element) {
         scaleY: element.scaleY,
         skewX: element.skewX,
         skewY: element.skewY,
-        rotation: element.rotation
+        rotation: element.rotation / 180.0 * Math.PI
     }
 };
 
@@ -174,13 +224,12 @@ function getElementType(element) {
     return null;
 }
 
-(function()
-{
+(function () {
     xjsfl.init(this);
     var elements = $$(':selected').elements;
     var structurizer = new JsonStructurizer();
     structurizer.structurize(elements);
     structurizer.saveStructure();
     alert("Done!");
-    
-})()
+
+})();

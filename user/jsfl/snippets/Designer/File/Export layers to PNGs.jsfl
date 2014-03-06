@@ -48,7 +48,7 @@
 			{
 				// variables
 					layer			= layers[i];
-					filename		= layer.name.slice(0, -3) + '.png';
+					filename		= layer.name + '.png';
 					uri				= saveDir + filename;
 					filenames.push(filename);
 					

@@ -25,10 +25,11 @@
 	// code
 	
 		// grab the export folder
-			folder = Folder.pick();
-			
+			//folder = Folder.pick();
+			var saveDir = fl.browseForFolderURL("Choose a folder in which to save your exported PNGs:");
+			saveDir += '/';
 		// store layer visibilities
-			if(folder)
+			if(saveDir)
 			{
 				for (var i = 0; i < layers.length; i++)
 				{
@@ -47,8 +48,8 @@
 			{
 				// variables
 					layer			= layers[i];
-					filename		= layer.name + '.png';
-					uri				= folder + filename;
+					filename		= layer.name.slice(0, -3) + '.png';
+					uri				= saveDir + filename;
 					filenames.push(filename);
 					
 				// export
@@ -64,7 +65,7 @@
 			}
 			
 		// trace exported files as a JavaScript Array
-			format("var folder = '{uri}';", URI.asPath(folder));
+			format("var saveDir = '{uri}';", saveDir);
 			format("var files = \n[\n\t'{filenames}'\n];", filenames.join("',\n\t'"));
 })();
 

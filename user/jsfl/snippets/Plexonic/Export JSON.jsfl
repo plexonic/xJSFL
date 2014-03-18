@@ -196,16 +196,41 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
 };
 
 $p.crateElementGenericMetadata = function (element) {
-    return {
+    var metadata = {
         x: element.x,
         y: element.y,
         scaleX: element.scaleX,
-        scaleY: element.scaleY,
-        skewX: element.skewX,
-        skewY: element.skewY,
-        rotation: element.rotation / 180.0 * Math.PI
+        scaleY: element.scaleY
+    };
+    var skewX = degToRad(element.skewX);
+    var skewY = degToRad(element.skewY);
+    var rotation = degToRad(element.rotation);
+    if (skewX == skewY &&  skewX == rotation) {
+        metadata.skewX = 0;
+        metadata.skewY = 0;
+        metadata.rotation = rotation;
     }
+    else{
+        metadata.skewX = skewX;
+        metadata.skewY = skewY;
+        metadata.rotation = rotation;
+    }
+    return metadata;
 };
+
+function degToRad(deg) {
+    var rad;
+    try {
+        rad = deg / 180.0 * Math.PI;
+    }
+    catch (e) {
+        rad = 0;
+    }
+    if (isNaN(rad)) {
+        rad = 0;
+    }
+    return rad;
+}
 
 function getElementType(element) {
     switch (element.instanceType) {

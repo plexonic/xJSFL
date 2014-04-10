@@ -17,15 +17,24 @@ else if (folderName=="iphone")
 }
 
 var pathToInspect=curDocPath.uri+"graphics/"+type;
+trace(pathToInspect);
 $$("/*png*/*").each(function(element,index) {
 	var curName=(new File(element.name)).name;
-	if (FLfile.exists(pathToInspect+curName))
+	if (FLfile.exists(pathToInspect+curName + ".png"))
 	{
 		existingItems.push(curName);
-		document.importFile(pathToInspect+curName,true);
-		trace("existing item found : " + curName);
+		document.importFile(pathToInspect+curName + ".png",true);
+		$dom.library.selectItem(curName + ".png");
+		$dom.library.renameItem(curName);
+//		trace("existing item found : " + curName);
 	}
+	else {
+		trace("Item " + curName + " exists in fla but is missing in graphics/" + type + " folder");
+	} 
 });
+
+
+
 $$(":symbol").each(function(element,index)
 {
 	var Timeline=element.timeline;
@@ -49,7 +58,7 @@ $$(":symbol").each(function(element,index)
 					{
 						for (var b=0;b<existingItems.length;b++)
 						{
-							if (Element.libraryItem.name=="png/"+existingItems[b])
+							if (Element.libraryItem.name=="[png]/"+existingItems[b])
 							{
 								var bi=$$(":bitmap").find(existingItems[b]).pop();
 								Element.libraryItem=bi;
@@ -63,7 +72,7 @@ $$(":symbol").each(function(element,index)
 });
 for (var i=0;i<existingItems.length;i++)
 {
-	$dom.library.deleteItem("png/"+existingItems[i]);
-	$dom.library.moveToFolder("png",existingItems[i]);
+	$dom.library.deleteItem("[png]/"+existingItems[i]);
+	$dom.library.moveToFolder("[png]",existingItems[i]);
 }
 alert("Done!");

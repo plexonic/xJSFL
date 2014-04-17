@@ -1936,7 +1936,7 @@
 								for each(var name in names)
 								{
 									itemURI = folderURI + name;
-									if(FLfile.exists(itemURI + '/'))
+									if(itemURI.indexOf(".jsfl")==-1)
 									{
 										processAll(itemURI + '/');
 									}

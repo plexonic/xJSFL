@@ -451,14 +451,14 @@
 				}
 				else
 				{
-					var data = Utils.getValues(stack, ['path','file','line','code'], true)
+					var data = Utils.getValues(stack, ['path','file','line','code'], true);
 					var output = '\n\n' + new Table(data).render(false);
 				}
 
 			// log
 				xjsfl.output.warn('File load error:');
 				xjsfl.output.log(output);
-				trace(output.replace(/^[\r\n]+/, ''))
+				trace(output.replace(/^[\r\n]+/, ''));
 
 			// update flags
 				xjsfl.loading	= false;
@@ -783,7 +783,7 @@
 		 */
 		save:function(pathOrURI, contents, force)
 		{
-			var uri			= URI.toURI(pathOrURI, 1)
+			var uri			= URI.toURI(pathOrURI, 1);
 			var file		= new File(uri);
 			
 
@@ -1258,7 +1258,7 @@
 											copyURIs.push({fromURI:element.uri, toURI:targetFile.uri, toPath:targetFile.path});
 										}
 									}
-								}
+								};
 
 							// find new or updated files
 								Utils.walkFolder(assetsURI, process);

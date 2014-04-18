@@ -703,7 +703,7 @@
 				// otherwise, do something with the uri / uris (plural) if more than 1 was found
 					else
 					{
-						var uris = Object.prototype.toString.call(uriResult)==='[object Array]' ? uriResult : [uriResult];
+						var uris = Utils.isArray(uriResult) ? uriResult : [uriResult];
 						for each(var uri in uris)
 						{
 

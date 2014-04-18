@@ -116,7 +116,7 @@
 				modules:	xjsfl.uri + 'modules/',
 				user:		xjsfl.uri + 'user/',
 				flash:		fl.configURI,
-				swf:		fl.configURI + 'WindowSWF/',
+				swf:		fl.configURI + 'WindowSWF/'
 
 		},
 
@@ -171,7 +171,7 @@
 				{
 					var uris = xjsfl.settings.uris;
 					return [].concat(uris.core).concat(uris.module).concat(uris.user);
-				},
+				}
 
 		},
 
@@ -236,7 +236,7 @@
 
 				// return
 					return outputPaths;
-			},
+			}
 
 		},
 
@@ -476,7 +476,7 @@
 			{
 				FLfile.remove(uri);
 			}
-		},
+		}
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -703,7 +703,7 @@
 				// otherwise, do something with the uri / uris (plural) if more than 1 was found
 					else
 					{
-						var uris = Utils.isArray(uriResult) ? uriResult : [uriResult];
+						var uris = Object.prototype.toString.call(uriResult)==='[object Array]' ? uriResult : [uriResult];
 						for each(var uri in uris)
 						{
 
@@ -1445,9 +1445,9 @@
 		{
 			var xul = this.dialogs[this.dialogs.length - 1];
 			xul ? xul.flashData = data: null;
-		},
+		}
 
-	}
+	};
 
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1527,8 +1527,8 @@
 			for(var prop in props)
 			{
 				xjsfl[prop] = props[prop];
-			};
-	})()
+			}
+	})();
 
 	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope

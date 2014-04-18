@@ -72,16 +72,16 @@
 				 * @param		{Array}			params		An optional Array of constructor parameters
 				 * @returns		{Object}					The new instance
 				 */
-				create:function (class, params)
+				create:function (clazz, params)
 				{
 					// params
-						class = typeof class === 'string' ? Utils.getDeepValue(window, class) : class;
+						clazz = typeof clazz === 'string' ? Utils.getDeepValue(window, clazz) : clazz;
 						params = params || [];
 						
 					// create
-						trace('>' + class);
+						trace('>' + clazz);
 						trace('>' + params);
-						var instance = new class();
+						var instance = new clazz();
 						//return class.apply(null, params);
 						
 					// return
@@ -355,10 +355,10 @@
 					// return the object's class if it's a native type
 						if(typeof value !== 'object')
 						{
-							var class = Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1];
-							if(class !== 'Object')
+							var clazz = Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1];
+							if(clazz !== 'Object')
 							{
-								return class;
+								return clazz;
 							}
 						}
 					

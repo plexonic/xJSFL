@@ -2,31 +2,67 @@
  * Finds items in the current document according to criteria you set
  * @icon {iconsURI}actions/find/find.png
  */
-(function(){
+xjsfl.init(this);
+var findDialog=new XUL("Find");
+findDialog.addTextbox("Search","Search");
+findDialog.addCheckbox("All library items","all_items",null,{checked:true});
+findDialog.addCheckbox("Stage","stage_elements",null,{enabled:false});
+findDialog.addButton("Find","Find");
+findDialog.addEvent("Find","click",onFind);
+findDialog.show();
 
-	xjsfl.init(this);
-	
-	require('utils')
-	
-	function find(value, property, type, context)
-	{
-		trace('\nSorry! Find tool not yet implemented.');		
-		
-		inspect(Utils.getParams(find, arguments), 'Parameters');
+function onFind(event)
+{
+    var keyword=this.controls.Search.value;
+    if (keyword==null)
+        alert("Type searchable keyword!");
+    else
+    {
+        if (this.controls.all_items.value)
+        {
+            var count=0;
+            trace("--- Library items");
+            $$("*").each(function(element,index) {
+                var curName=new File(element.name).name;
+                if (curName.substring(0,keyword.length)==keyword)
+                {
+                    if (element.itemType=="movie clip" || element.itemType=="graphic" || element.itemType=="button" || element.itemType=="bitmap")
+                    {
+                        trace(element.itemType+ " "+curName);
+                        count++;
+                        findUsage(element);
+                    }
+                }
+            });
+            if (count==0)
+                trace("Nothing found matching keywords!");
+        }
+    }
+}
 
-		switch(context)
-		{
-			case '':
-			break;
-
-			case '':
-			break;
-
-			case '':
-			break;
-		}
-	}
-
-	XUL.create('text:Value,text:Property=name,radio:On={Library Item:item,Layer:layer,Frame:frame,Element:element},radio:In={Stage:stage,All Library Items:library,Selected Library Items:items},title:Find something...', find);
-
-})()
+function findUsage(selectedValue)
+{
+    var curSymbolName;
+    var usageCount=0;
+    function elementCallback(element, index, elements, context)
+    {
+        if (element.libraryItem==selectedValue)
+        {
+            trace("     FOUND IN: "+curSymbolName);
+            usageCount++;
+        }
+    }
+    function itemCallback(item, index, items, context)
+    {
+        if (item.itemType!="movie clip" && item.itemType!="graphic" && item.itemType!="button")
+            return false;
+        else
+            curSymbolName=item.name;
+    }
+    Iterators.items(null,itemCallback,null,null,elementCallback);
+    if (usageCount==0)
+        trace("     FREE OF USE!");
+    else
+        trace("     FOUND "+usageCount+ "times!");
+    trace();
+}

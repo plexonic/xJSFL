@@ -29,7 +29,6 @@ function onBrowse(event)
                     break;
                 case "image":
                     document.library.addItemToDocument({x:0,y:0},"png/"+curElement.name);
-                    //var image=$("/png/"+curElement.name).get(0);
                     var image=document.selection[0];
                     image.scaleX=curElement.scaleX;
                     image.scaleY=curElement.scaleY;
@@ -50,6 +49,7 @@ function onBrowse(event)
 //                   document.selection[0].setTextAttr("italic",curElement.italic);
 //                   document.selection[0].setTextAttr("fillColor",curElement.color);
 //                   document.selection[0].setTextAttr("size",curElement.size);
+                    break;
             }
             document.selectNone();
         }

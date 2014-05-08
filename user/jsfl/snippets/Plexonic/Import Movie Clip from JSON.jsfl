@@ -5,13 +5,11 @@ dialog.addTextbox("JSON path","path");
 dialog.addButton("Browse...","browse");
 dialog.addEvent("browse","click",onBrowse);
 dialog.show();
-function importMC(MCName, MCProps)
+function addElementToMC(elementProps)
 {
-    $dom.library.addNewItem("movie clip","symbols/"+MCName);
-    $dom.library.editItem("symbols/"+MCName);
-    for (var i=0;i<MCProps.length;i++)
+    for (var i=0;i<elementProps.length;i++)
     {
-        var curElement=MCProps[i];
+        var curElement=elementProps[i];
         var kind=curElement.kind;
         switch(kind)
         {
@@ -43,8 +41,11 @@ function importMC(MCName, MCProps)
                 document.selection[0].setTextAttr("size",curElement.size);
                 break;
             case "sprite":
-//                $dom.library.addNewItem("movie clip","symbols/"+curElement.name);
-
+//                var childElements=curElement.children;
+//                for (var i=0;i<childElements.length;i++)
+//                {
+//                    importMC(childElements[i].name,childElements[i]);
+//                }
                 break;
         }
         document.selectNone();
@@ -60,7 +61,9 @@ function onBrowse(event)
     for (var curMovieClipName in movieClips)
     {
         var curMovieClip=movieClips[curMovieClipName];
-        importMC(curMovieClipName,curMovieClip);
+        $dom.library.addNewItem("movie clip","symbols/"+curMovieClipName);
+        $dom.library.editItem("symbols/"+curMovieClipName);
+        addElementToMC(curMovieClip);
     }
 }
      

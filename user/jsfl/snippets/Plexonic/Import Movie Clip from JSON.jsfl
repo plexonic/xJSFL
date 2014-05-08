@@ -1,9 +1,36 @@
 xjsfl.init(this);
+
+fl.createDocument();
+
 var dialog=new XUL("Choose json file");
 dialog.addTextbox("JSON path","json_path");
 dialog.addButton("Browse...","browse");
 dialog.addEvent("browse","click",onJsonBrowse);
-dialog.show();
+dialog.addTextbox("Graphics path","bitmap_path");
+dialog.addButton("Browse...","browseFolder");
+dialog.addEvent("browseFolder","click",onFolderBrowse);
+dialog.show(onAccept);
+
+var folderURI;
+
+function onAccept(jsonPath,graphicsPath)
+{
+    folderURI=URI.toURI(graphicsPath);
+    var json=new File(URI.toURI(jsonPath)).contents;
+    var movieClips=JSON.decode(json);
+    document.library.newFolder("png");
+    for (var curMovieClipName in movieClips)
+    {
+        var curMovieClip=movieClips[curMovieClipName];
+        $dom.library.addNewItem("movie clip","symbols/"+curMovieClipName);
+        $dom.library.editItem("symbols/"+curMovieClipName);
+        addElementsToMC(curMovieClip,curMovieClipName);
+    }
+}
+function onFolderBrowse(event)
+{
+    this.controls.bitmap_path.value=URI.toPath(fl.browseForFolderURL("Choose graphics folder"));
+}
 function radToDeg(angleInRad)
 {
     return angleInRad*180/Math.PI;
@@ -17,6 +44,19 @@ function addElementsToMC(elements,MCname)
         switch(kind)
         {
             case "image":
+                var bitmapURI=folderURI+"/"+curElement.name+".png";
+                if (FLfile.exists(bitmapURI))
+                {
+                    trace(bitmapURI+ " exists!");
+                    document.importFile(bitmapURI,true);
+                    document.library.selectItem(curElement.name+".png",true);
+                    document.library.renameItem(curElement.name);
+                    document.library.moveToFolder("png");
+                }
+                else
+                {
+                    trace(bitmapURI+ " does not exist!");
+                }
                 document.library.addItemToDocument({x:0,y:0},"png/"+curElement.name);
                 var image=document.selection[0];
                 image.scaleX=curElement.scaleX;
@@ -58,14 +98,5 @@ function onJsonBrowse(event)
 {
     var jsonURI=fl.browseForFileURL("open","Choose json file");
     this.controls.json_path.value=URI.toPath(jsonURI);
-    var json=new File(jsonURI).contents;
-    var movieClips=JSON.decode(json);
-    for (var curMovieClipName in movieClips)
-    {
-        var curMovieClip=movieClips[curMovieClipName];
-        $dom.library.addNewItem("movie clip","symbols/"+curMovieClipName);
-        $dom.library.editItem("symbols/"+curMovieClipName);
-        addElementsToMC(curMovieClip,curMovieClipName);
-    }
 }
      

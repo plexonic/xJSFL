@@ -74,7 +74,8 @@ $p.crateMovieClipMetadata = function (item, metadata) {
 $p.crateElementMetadata = function (element, metadata) {
     var elementMetadata = $p.crateElementGenericMetadata(element);
     var elementName = "";
-    var elementKind = "";
+	var elementLibraryName = "";
+    var elementKind = "";	
     var customMetadataSetter = null;
     switch (getElementType(element)) {
         case ELEMENT_TYPE_BITMAP:
@@ -84,6 +85,7 @@ $p.crateElementMetadata = function (element, metadata) {
         case ELEMENT_TYPE_SYMBOL:
             elementName = element.name;
             elementKind = "sprite";
+			elementLibraryName = element.libraryItem.itemName;
             customMetadataSetter = $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
@@ -101,12 +103,12 @@ $p.crateElementMetadata = function (element, metadata) {
             break;
     }
 
-    $p.setElementSpecificMetadata(elementName, elementKind, element, elementMetadata, customMetadataSetter);
+    $p.setElementSpecificMetadata(elementName, elementLibraryName, elementKind, element, elementMetadata, customMetadataSetter);
     metadata.push(elementMetadata);
 };
 
-$p.setElementSpecificMetadata = function (name, kind, element, elementMetadata, customMetadataSetter) {
-    $p.setElementNameAndKind(name, kind, elementMetadata);
+$p.setElementSpecificMetadata = function (name, libraryName, kind, element, elementMetadata, customMetadataSetter) {
+    $p.setElementNameAndKind(name, libraryName, kind, elementMetadata);
     if (customMetadataSetter) {
         customMetadataSetter(element, elementMetadata);
     }
@@ -133,9 +135,10 @@ $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
     elementMetadata.children = $p.crateMovieClipMetadata(element.libraryItem, []);
 };
 
-$p.setElementNameAndKind = function (name, kind, elementMetadata) {
+$p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
     elementMetadata.name = name;
-    elementMetadata.kind = kind;
+	elementMetadata.libraryName = libraryName;
+    elementMetadata.kind = kind;	
 };
 
 $p.textFieldCustomMetadataSetter = function (element, elementMetadata) {

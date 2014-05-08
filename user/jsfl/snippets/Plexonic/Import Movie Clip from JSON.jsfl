@@ -1,22 +1,17 @@
 xjsfl.init(this);
-
 var dialog=new XUL("Choose json file");
 dialog.addTextbox("JSON path","path");
 dialog.addButton("Browse...","browse");
 dialog.addEvent("browse","click",onBrowse);
 dialog.show();
-function addElementToMC(elementProps)
+function addElementsToMC(elements)
 {
-    for (var i=0;i<elementProps.length;i++)
+    for (var i=0;i<elements.length;i++)
     {
-        var curElement=elementProps[i];
+        var curElement=elements[i];
         var kind=curElement.kind;
         switch(kind)
         {
-            case "quad":
-                // can't implement
-                // missing information for the type of the shape
-                break;
             case "image":
                 document.library.addItemToDocument({x:0,y:0},"png/"+curElement.name);
                 var image=document.selection[0];
@@ -41,11 +36,10 @@ function addElementToMC(elementProps)
                 document.selection[0].setTextAttr("size",curElement.size);
                 break;
             case "sprite":
-//                var childElements=curElement.children;
-//                for (var i=0;i<childElements.length;i++)
-//                {
-//                    importMC(childElements[i].name,childElements[i]);
-//                }
+                $dom.library.addNewItem("movie clip","symbols/"+curElement.libraryName);
+                $dom.library.addItemToDocument({x:curElement.x,y:curElement.y},"symbols/"+curElement.libraryName);
+                $dom.library.editItem("symbols/"+curElement.libraryName);
+                addElementsToMC(curElement.children);
                 break;
         }
         document.selectNone();
@@ -63,7 +57,7 @@ function onBrowse(event)
         var curMovieClip=movieClips[curMovieClipName];
         $dom.library.addNewItem("movie clip","symbols/"+curMovieClipName);
         $dom.library.editItem("symbols/"+curMovieClipName);
-        addElementToMC(curMovieClip);
+        addElementsToMC(curMovieClip);
     }
 }
      

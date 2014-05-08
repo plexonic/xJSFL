@@ -1,8 +1,8 @@
 xjsfl.init(this);
 var dialog=new XUL("Choose json file");
-dialog.addTextbox("JSON path","path");
+dialog.addTextbox("JSON path","json_path");
 dialog.addButton("Browse...","browse");
-dialog.addEvent("browse","click",onBrowse);
+dialog.addEvent("browse","click",onJsonBrowse);
 dialog.show();
 function radToDeg(angleInRad)
 {
@@ -54,10 +54,10 @@ function addElementsToMC(elements,MCname)
     }
 }
 
-function onBrowse(event)
+function onJsonBrowse(event)
 {
     var jsonURI=fl.browseForFileURL("open","Choose json file");
-    this.controls.path.value=URI.toPath(jsonURI);
+    this.controls.json_path.value=URI.toPath(jsonURI);
     var json=new File(jsonURI).contents;
     var movieClips=JSON.decode(json);
     for (var curMovieClipName in movieClips)

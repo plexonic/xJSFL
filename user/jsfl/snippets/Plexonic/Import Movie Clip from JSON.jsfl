@@ -39,17 +39,17 @@ function onBrowse(event)
                     image.rotation=curElement.rotation;
                     break;
                 case "text":
-//                   document.addNewText({left:curElement.x,top:curElement.y,right:(curElement.x+curElement.width),bottom:(curElement.y+curElement.height)});
-//                   document.setTextString(curElement.characters);
-////                     document.scaleSelection(curElement.scaleX,curElement.scaleY);
-////                   document.skewSelection(curElement.skewX,curElement.skewY);
-////                   document.rotateSelection(curElement.rotation);
-//                   //document.setElementProperty("name",curElement.name);
-//                   document.selection[0].setTextAttr("bold",curElement.bold);
-//                   document.selection[0].setTextAttr("italic",curElement.italic);
-//                   document.selection[0].setTextAttr("fillColor",curElement.color);
-//                   document.selection[0].setTextAttr("size",curElement.size);
-                    break;
+                   document.addNewText({left:curElement.x,top:curElement.y,right:(curElement.x+curElement.width),bottom:(curElement.y+curElement.height)});
+                   document.setTextString(curElement.characters);
+                   document.scaleSelection(curElement.scaleX,curElement.scaleY);
+                   document.skewSelection(curElement.skewX,curElement.skewY);
+                   document.rotateSelection(curElement.rotation);
+                   document.setElementProperty("name",curElement.name);
+                   document.selection[0].setTextAttr("bold",curElement.bold);
+                   document.selection[0].setTextAttr("italic",curElement.italic);
+                   document.selection[0].setTextAttr("fillColor",curElement.color);
+                   document.selection[0].setTextAttr("size",curElement.size);
+                   break;
             }
             document.selectNone();
         }

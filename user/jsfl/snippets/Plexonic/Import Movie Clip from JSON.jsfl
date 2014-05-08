@@ -47,25 +47,24 @@ function addElementsToMC(elements,MCname)
                 var bitmapURI=folderURI+"/"+curElement.name+".png";
                 if (FLfile.exists(bitmapURI))
                 {
-                    trace(bitmapURI+ " exists!");
                     document.importFile(bitmapURI,true);
                     document.library.selectItem(curElement.name+".png",true);
                     document.library.renameItem(curElement.name);
                     document.library.moveToFolder("png");
+                    document.library.addItemToDocument({x:0,y:0},"png/"+curElement.name);
+                    var image=document.selection[0];
+                    image.scaleX=curElement.scaleX;
+                    image.scaleY=curElement.scaleY;
+                    image.x=curElement.x;
+                    image.y=curElement.y;
+                    image.skewX=curElement.skewX;
+                    image.skewY=curElement.skewY;
+                    image.rotation=radToDeg(curElement.rotation);
                 }
                 else
                 {
                     trace(bitmapURI+ " does not exist!");
                 }
-                document.library.addItemToDocument({x:0,y:0},"png/"+curElement.name);
-                var image=document.selection[0];
-                image.scaleX=curElement.scaleX;
-                image.scaleY=curElement.scaleY;
-                image.x=curElement.x;
-                image.y=curElement.y;
-                image.skewX=curElement.skewX;
-                image.skewY=curElement.skewY;
-                image.rotation=radToDeg(curElement.rotation);
                 break;
             case "text":
                 document.addNewText({left:curElement.x,top:curElement.y,right:(curElement.x+curElement.width),bottom:(curElement.y+curElement.height)});

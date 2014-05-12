@@ -55,13 +55,30 @@ function addElementsToMC(elements,MCname)
                 document.selectNone();
                 break;
             case "image":
-                var bitmapURI=folderURI+"/"+curElement.name+".png";
-                if (FLfile.exists(bitmapURI))
+                var addItem=true;
+                if (document.library.itemExists("png/"+curElement.name))
                 {
-                    document.importFile(bitmapURI,true);
-                    document.library.selectItem(curElement.name+".png",true);
-                    document.library.renameItem(curElement.name);
-                    document.library.moveToFolder("png");
+                    document.library.selectItem(curElement.name,true);
+                }
+                else
+                {
+                    var bitmapURI=folderURI+"/"+curElement.name+".png";
+                    if (FLfile.exists(bitmapURI))
+                    {
+                        document.importFile(bitmapURI,true);
+                        document.library.selectItem(curElement.name+".png",true);
+                        document.library.renameItem(curElement.name);
+                        document.library.moveToFolder("png");
+                    }
+                    else
+                    {
+                        addItem=false;
+                        trace(bitmapURI+ " does not exist!");
+                    }
+
+                }
+                if (addItem)
+                {
                     document.library.addItemToDocument({x:0,y:0},"png/"+curElement.name);
                     var image=document.selection[0];
                     image.scaleX=curElement.scaleX;
@@ -71,10 +88,6 @@ function addElementsToMC(elements,MCname)
                     image.skewX=curElement.skewX;
                     image.skewY=curElement.skewY;
                     image.rotation=radToDeg(curElement.rotation);
-                }
-                else
-                {
-                    trace(bitmapURI+ " does not exist!");
                 }
                 break;
             case "text":

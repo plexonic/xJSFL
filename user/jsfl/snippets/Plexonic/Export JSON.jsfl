@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
  * Copyright Teoken LLC. (c) 2013. All rights reserved.
  * Copying or usage of any piece of this source code without written notice from Teoken LLC is a major crime.
  * Այս կոդը Թեոկեն ՍՊԸ ընկերության սեփականությունն է:
@@ -92,7 +92,7 @@ $p.crateElementMetadata = function (element, metadata) {
     var customMetadataSetter = null;
     switch (getElementType(element)) {
         case ELEMENT_TYPE_BITMAP:
-            elementName = element.libraryItem.itemName;
+            elementName = (new File(element.libraryItem.name)).name;
             elementKind = "image";
             break;
         case ELEMENT_TYPE_SYMBOL:
@@ -112,7 +112,7 @@ $p.crateElementMetadata = function (element, metadata) {
             customMetadataSetter = $p.shapeCustomMetadataSetter;
             break;
         default:
-            inspect(element);
+            //inspect(element);
             break;
     }
 
@@ -172,7 +172,7 @@ $p.setTextFieldFiltersMetadata = function (filters, elementMetadata) {
     var filtersMetadata = [];
     for (var i = 0; i < filters.length; ++i) {
         var filter = filters[i];
-        inspect(filter);
+        //inspect(filter);
         filtersMetadata.push({
             name: filter.name,
             angle: filter.angle,

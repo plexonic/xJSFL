@@ -43,6 +43,17 @@ function addElementsToMC(elements,MCname)
         var kind=curElement.kind;
         switch(kind)
         {
+            case "quad":
+                var fill=document.getCustomFill();
+                fill.color=curElement.color;
+                fill.style="solid";
+                document.setCustomFill(fill);
+                document.addNewRectangle({left:curElement.x,top:curElement.y,right:curElement.width+curElement.x,bottom:curElement.height+curElement.y},0);
+                document.setSelectionRect({left:curElement.x,top:curElement.y,right:curElement.width+curElement.x,bottom:curElement.height+curElement.y},true);
+                document.scaleSelection(curElement.scaleX,curElement.scaleY);
+                document.skewSelection(curElement.skewX,curElement.skewY);
+                document.rotateSelection(radToDeg(curElement.rotation));
+                break;
             case "image":
                 var bitmapURI=folderURI+"/"+curElement.name+".png";
                 if (FLfile.exists(bitmapURI))

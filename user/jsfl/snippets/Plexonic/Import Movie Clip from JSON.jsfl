@@ -49,10 +49,11 @@ function addElementsToMC(elements,MCname)
                 fill.style="solid";
                 document.setCustomFill(fill);
                 document.addNewRectangle({left:curElement.x,top:curElement.y,right:curElement.width+curElement.x,bottom:curElement.height+curElement.y},0);
-                document.setSelectionRect({left:curElement.x,top:curElement.y,right:curElement.width+curElement.x,bottom:curElement.height+curElement.y},true);
+                //document.setSelectionRect({left:curElement.x,top:curElement.y,right:curElement.width+curElement.x,bottom:curElement.height+curElement.y},true);
                 document.scaleSelection(curElement.scaleX,curElement.scaleY);
                 document.skewSelection(curElement.skewX,curElement.skewY);
                 document.rotateSelection(radToDeg(curElement.rotation));
+                document.selectNone();
                 break;
             case "image":
                 var bitmapURI=folderURI+"/"+curElement.name+".png";

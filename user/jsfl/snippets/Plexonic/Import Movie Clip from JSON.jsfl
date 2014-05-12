@@ -1,6 +1,6 @@
 xjsfl.init(this);
 
-fl.createDocument();
+document=fl.createDocument();
 
 var dialog=new XUL("Choose json file");
 dialog.addTextbox("JSON path","json_path");

@@ -53,9 +53,20 @@ $p.crateMovieClipMetadata = function (item, metadata) {
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
         //skipping guide layers!
-        if (layer.layerType == 'guide') {
+        if (layer.layerType == 'guide' || layer.layerType=='folder') {
             continue;
         }
+        var layerObject={};
+        var layerMeta={};
+        layerMeta.name=layer.name;
+        if (layer.parentLayer)
+            layerMeta.folder=layer.parentLayer.name;
+        else
+            layerMeta.folder="";
+        layerMeta.locked=layer.locked;
+        layerMeta.visible=layer.visible;
+        layerObject.layerMeta=layerMeta;
+        layerObject.children=[];
         for (var j = 0; j < layer.frames.length; j++) {
             var frame = layer.frames[j];
             if (j == frame.startFrame) {
@@ -63,11 +74,13 @@ $p.crateMovieClipMetadata = function (item, metadata) {
                 for (var k = 0; k < elements.length; k++) {
                     var element = elements[k];
                     // do something with element
-                    $p.crateElementMetadata(element, metadata);
+                    $p.crateElementMetadata(element, layerObject.children);
                 }
             }
         }
+        metadata.push(layerObject);
     }
+
     return metadata;
 };
 
@@ -75,7 +88,7 @@ $p.crateElementMetadata = function (element, metadata) {
     var elementMetadata = $p.crateElementGenericMetadata(element);
     var elementName = "";
 	var elementLibraryName = "";
-    var elementKind = "";	
+    var elementKind = "";
     var customMetadataSetter = null;
     switch (getElementType(element)) {
         case ELEMENT_TYPE_BITMAP:
@@ -132,13 +145,13 @@ $p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {
 
 $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
     elementMetadata.alpha = element.colorAlphaPercent * .01;
-    elementMetadata.children = $p.crateMovieClipMetadata(element.libraryItem, []);
+    elementMetadata.layers = $p.crateMovieClipMetadata(element.libraryItem,[]);
 };
 
 $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
     elementMetadata.name = name;
 	elementMetadata.libraryName = libraryName;
-    elementMetadata.kind = kind;	
+    elementMetadata.kind = kind;
 };
 
 $p.textFieldCustomMetadataSetter = function (element, elementMetadata) {

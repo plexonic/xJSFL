@@ -22,8 +22,8 @@ function onAccept(jsonPath,graphicsPath)
     for (var curMovieClipName in movieClips)
     {
         var curMovieClip=movieClips[curMovieClipName];
-        $dom.library.addNewItem("movie clip","symbols/"+curMovieClipName);
-        $dom.library.editItem("symbols/"+curMovieClipName);
+        document.library.addNewItem("movie clip","symbols/"+curMovieClipName);
+        document.library.editItem("symbols/"+curMovieClipName);
         addElementsToMC(curMovieClip,curMovieClipName);
     }
 }
@@ -79,11 +79,11 @@ function addElementsToMC(elements,MCname)
                 document.rotateSelection(radToDeg(curElement.rotation));
                 break;
             case "sprite":
-                $dom.library.addNewItem("movie clip","symbols/"+curElement.libraryName);
-                $dom.library.addItemToDocument({x:curElement.x,y:curElement.y},"symbols/"+curElement.libraryName);
-                $dom.library.editItem("symbols/"+curElement.libraryName);
+                document.library.addNewItem("movie clip","symbols/"+curElement.libraryName);
+                document.library.addItemToDocument({x:curElement.x,y:curElement.y},"symbols/"+curElement.libraryName);
+                document.library.editItem("symbols/"+curElement.libraryName);
                 addElementsToMC(curElement.children,curElement.libraryName);
-                $dom.library.editItem("symbols/"+MCname);
+                document.library.editItem("symbols/"+MCname);
                 document.scaleSelection(curElement.scaleX,curElement.scaleY);
                 document.skewSelection(curElement.skewX,curElement.skewY);
                 document.rotateSelection(radToDeg(curElement.rotation));

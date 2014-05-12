@@ -98,7 +98,7 @@ $p.crateElementMetadata = function (element, metadata) {
         case ELEMENT_TYPE_SYMBOL:
             elementName = element.name;
             elementKind = "sprite";
-			elementLibraryName = element.libraryItem.itemName;
+			elementLibraryName = element.libraryItem.name;
             customMetadataSetter = $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:

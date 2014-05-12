@@ -113,7 +113,6 @@ function addElementsToMC(elements,MCname)
                 else
                 {
                     document.library.addNewItem("movie clip","symbols/"+curElement.libraryName);
-                    trace(curElement.x+" "+curElement.y);
                     document.library.addItemToDocument({x:curElement.x,y:curElement.y},"symbols/"+curElement.libraryName);
                     document.library.editItem("symbols/"+curElement.libraryName);
                     addElementsToMC(curElement.children,curElement.libraryName);

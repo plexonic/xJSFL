@@ -69,6 +69,7 @@ function modifyMC(layers,MCname,reverse)
                     break;
                 case "image":
                     var addItem=true;
+
                     if (document.library.itemExists("png/"+curElement.name))
                     {
                         document.library.selectItem(curElement.name,true);

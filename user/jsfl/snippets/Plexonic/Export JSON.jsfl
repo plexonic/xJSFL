@@ -129,7 +129,7 @@ $p.shapeCustomMetadataSetter = function (element, elementMetadata) {
 };
 
 $p.formatColor = function (colorString) {
-    return "0x" + colorString.substr(1, 6);
+    return "0x" + colorString.substr(1, colorString.length-1);
 };
 
 $p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {

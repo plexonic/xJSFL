@@ -51,6 +51,7 @@ function modifyMC(layers, MCname, reverse) {
                     document.setCustomFill(fill);
                     document.addNewRectangle({left: curElement.x, top: curElement.y, right: curElement.width + curElement.x, bottom: curElement.height + curElement.y}, 0, false, true);
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
+                    document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);
                     document.rotateSelection(radToDeg(curElement.rotation));
                     document.selectNone();

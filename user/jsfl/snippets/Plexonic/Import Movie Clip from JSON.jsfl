@@ -32,16 +32,19 @@ function onAccept(jsonPath, graphicsPath) {
     }
 }
 function modifyMC(layers, MCname, reverse) {
-    for (var i = 0; i < layers.length; i++) {
+    for (var i = layers.length-1; i >=0; i--) {
         var timeline = document.getTimeline();
+        timeline.currentLayer=0;
         var curLayer = layers[i];
         var curLayerInfo = curLayer.layerMeta;
         var folderName=curLayerInfo.folder;
         timeline.addNewLayer(curLayerInfo.name, "normal",false);
+        //trace(curLayerInfo.name+ " added!");
         if (folderName!="")
         {
             if (!timeline.findLayerIndex(folderName)) {
                 timeline.addNewLayer(folderName, "folder");
+                //trace(folderName+ " added!");
             }
             timeline.cutLayers(timeline.findLayerIndex(curLayerInfo.name).pop());
             timeline.pasteLayers(timeline.findLayerIndex(folderName).pop());
@@ -149,7 +152,9 @@ function modifyMC(layers, MCname, reverse) {
             }
             document.selectNone();
         }
-        timeline.currentLayer=0;
+        timeline.currentLayer=timeline.findLayerIndex(curLayerInfo.name).pop();
+        timeline.setLayerProperty("visible",curLayerInfo.visible);
+        timeline.setLayerProperty("locked",curLayerInfo.locked);
     }
     timeline.deleteLayer(0);
 

@@ -65,8 +65,6 @@ $p.crateMovieClipMetadata = function (item, metadata) {
         }
         else
             layerMeta.folder="";
-        layerMeta.visible=layer.visible;
-        layerMeta.locked=layer.locked;
         layerObject.layerMeta=layerMeta;
         layerObject.children=[];
         for (var j = 0; j < layer.frames.length; j++) {

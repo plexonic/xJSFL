@@ -39,16 +39,15 @@ function modifyMC(layers, MCname, reverse) {
         var curLayerInfo = curLayer.layerMeta;
         var folderName=curLayerInfo.folder;
         timeline.addNewLayer(curLayerInfo.name, "normal",false);
-        //trace(curLayerInfo.name+ " added!");
         if (folderName!="")
         {
             if (!timeline.findLayerIndex(folderName)) {
                 timeline.addNewLayer(folderName, "folder");
-                //trace(folderName+ " added!");
             }
             timeline.cutLayers(timeline.findLayerIndex(curLayerInfo.name).pop());
             timeline.pasteLayers(timeline.findLayerIndex(folderName).pop());
         }
+        timeline.currentLayer=timeline.findLayerIndex(curLayerInfo.name).pop();
         var elements = curLayer.children;
         if (reverse)
             elements = elements.reverse();
@@ -134,16 +133,18 @@ function modifyMC(layers, MCname, reverse) {
                     break;
                 case "sprite":
                     if (document.library.itemExists("symbols/" + curElement.libraryName)) {
-                        document.library.addItemToDocument({x: curElement.x, y: curElement.y}, "symbols/" + curElement.libraryName);
+                        document.library.addItemToDocument({x:curElement.x,y:curElement.y}, "symbols/" + curElement.libraryName);
                     }
                     else {
                         document.library.addNewItem("movie clip", "symbols/" + curElement.libraryName);
-                        document.library.addItemToDocument({x: curElement.x, y: curElement.y}, "symbols/" + curElement.libraryName);
+                        document.library.addItemToDocument({x:curElement.x,y:curElement.y}, "symbols/" + curElement.libraryName);
                         document.library.editItem("symbols/" + curElement.libraryName);
                         modifyMC(curElement.layers, curElement.libraryName, false);
                         document.library.editItem("symbols/" + MCname);
                     }
                     document.setElementProperty("name", curElement.name);
+//                    document.setElementProperty("x",curElement.x);
+//                    document.setElementProperty("y",curElement.y);
                     document.setInstanceAlpha(curElement.alpha * 100);
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);
@@ -152,9 +153,6 @@ function modifyMC(layers, MCname, reverse) {
             }
             document.selectNone();
         }
-        timeline.currentLayer=timeline.findLayerIndex(curLayerInfo.name).pop();
-        timeline.setLayerProperty("visible",curLayerInfo.visible);
-        timeline.setLayerProperty("locked",curLayerInfo.locked);
     }
     timeline.deleteLayer(0);
 

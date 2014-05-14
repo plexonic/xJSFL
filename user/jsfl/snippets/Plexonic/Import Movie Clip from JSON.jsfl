@@ -36,7 +36,16 @@ function modifyMC(layers, MCname, reverse) {
         var timeline = document.getTimeline();
         var curLayer = layers[i];
         var curLayerInfo = curLayer.layerMeta;
-        timeline.addNewLayer(curLayerInfo.name, "normal", false);
+        var folderName=curLayerInfo.folder;
+        timeline.addNewLayer(curLayerInfo.name, "normal",false);
+        if (folderName!="")
+        {
+            if (!timeline.findLayerIndex(folderName)) {
+                timeline.addNewLayer(folderName, "folder");
+            }
+            timeline.cutLayers(timeline.findLayerIndex(curLayerInfo.name).pop());
+            timeline.pasteLayers(timeline.findLayerIndex(folderName).pop());
+        }
         var elements = curLayer.children;
         if (reverse)
             elements = elements.reverse();
@@ -140,8 +149,10 @@ function modifyMC(layers, MCname, reverse) {
             }
             document.selectNone();
         }
+        timeline.currentLayer=0;
     }
     timeline.deleteLayer(0);
+
 }
 function onFolderBrowse(event) {
     this.controls.bitmap_path.value = URI.toPath(fl.browseForFolderURL("Choose graphics folder"));

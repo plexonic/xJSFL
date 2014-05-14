@@ -59,6 +59,14 @@ $p.crateMovieClipMetadata = function (item, metadata) {
         var layerObject={};
         var layerMeta={};
         layerMeta.name=layer.name;
+        if (layer.parentLayer!=null)
+        {
+            layerMeta.folder=layer.parentLayer.name;
+        }
+        else
+            layerMeta.folder="";
+        layerMeta.visible=layer.visible;
+        layerMeta.locked=layer.locked;
         layerObject.layerMeta=layerMeta;
         layerObject.children=[];
         for (var j = 0; j < layer.frames.length; j++) {

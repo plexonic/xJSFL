@@ -82,7 +82,7 @@ function modifyMC(layers, MCname, reverse) {
                         }
                         else {
                             addItem = false;
-                            trace(bitmapURI + " does not exist!");
+                            trace(MCname + " requires "+bitmapURI + " which cannot be found!");
                         }
 
                     }

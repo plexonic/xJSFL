@@ -27,7 +27,7 @@ function onAccept(jsonPath, graphicsPath) {
         if (!document.library.itemExists("symbols/" + curMovieClipName)) {
             document.library.addNewItem("movie clip", "symbols/" + curMovieClipName);
             document.library.editItem("symbols/" + curMovieClipName);
-            modifyMC(layers, curMovieClipName, true);
+            modifyMC(layers, curMovieClipName, false);
         }
     }
 }
@@ -64,7 +64,6 @@ function modifyMC(layers, MCname, reverse) {
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);
-                    document.rotateSelection(radToDeg(curElement.rotation));
                     document.selectNone();
                     break;
                 case "image":
@@ -92,11 +91,11 @@ function modifyMC(layers, MCname, reverse) {
                         var image = document.selection[0];
                         image.scaleX = curElement.scaleX;
                         image.scaleY = curElement.scaleY;
-                        image.x = curElement.x;
-                        image.y = curElement.y;
                         image.skewX = curElement.skewX;
                         image.skewY = curElement.skewY;
                         image.rotation = radToDeg(curElement.rotation);
+                        image.x = curElement.x;
+                        image.y = curElement.y;
                     }
                     break;
                 case "text":
@@ -129,15 +128,22 @@ function modifyMC(layers, MCname, reverse) {
                     document.selection[0].setTextAttr("fillColor", curElement.color);
                     document.selection[0].setTextAttr("size", curElement.size);
                     document.selection[0].setTextAttr("alignment", curElement.alignment);
-                    document.rotateSelection(radToDeg(curElement.rotation));
                     break;
                 case "sprite":
                     if (document.library.itemExists("symbols/" + curElement.libraryName)) {
-                        document.library.addItemToDocument({x:curElement.x,y:curElement.y}, "symbols/" + curElement.libraryName);
+                        document.library.addItemToDocument({x:0,y:0}, "symbols/" + curElement.libraryName);
+                        document.scaleSelection(curElement.scaleX, curElement.scaleY);
+                        document.skewSelection(curElement.skewX, curElement.skewY);
+                        document.setElementProperty("x",curElement.x);
+                        document.setElementProperty("y",curElement.y);
                     }
                     else {
                         document.library.addNewItem("movie clip", "symbols/" + curElement.libraryName);
-                        document.library.addItemToDocument({x:curElement.x,y:curElement.y}, "symbols/" + curElement.libraryName);
+                        document.library.addItemToDocument({x:0,y:0}, "symbols/" + curElement.libraryName);
+                        document.scaleSelection(curElement.scaleX, curElement.scaleY);
+                        document.skewSelection(curElement.skewX, curElement.skewY);
+                        document.setElementProperty("x",curElement.x);
+                        document.setElementProperty("y",curElement.y);
                         document.library.editItem("symbols/" + curElement.libraryName);
                         modifyMC(curElement.layers, curElement.libraryName, false);
                         document.library.editItem("symbols/" + MCname);
@@ -146,9 +152,9 @@ function modifyMC(layers, MCname, reverse) {
 //                    document.setElementProperty("x",curElement.x);
 //                    document.setElementProperty("y",curElement.y);
                     document.setInstanceAlpha(curElement.alpha * 100);
-                    document.scaleSelection(curElement.scaleX, curElement.scaleY);
-                    document.skewSelection(curElement.skewX, curElement.skewY);
-                    document.rotateSelection(radToDeg(curElement.rotation));
+
+                    //document.rotateSelection(radToDeg(curElement.rotation));
+
                     break;
             }
             document.selectNone();

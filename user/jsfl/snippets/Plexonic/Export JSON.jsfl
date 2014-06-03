@@ -224,13 +224,12 @@ $p.crateElementGenericMetadata = function (element) {
     if (skewX == skewY &&  skewX == rotation) {
         metadata.skewX = 0;
         metadata.skewY = 0;
-        metadata.rotation = rotation;
     }
     else{
         metadata.skewX = skewX;
         metadata.skewY = skewY;
-        metadata.rotation = rotation;
     }
+    metadata.rotation = rotation;
     return metadata;
 };
 

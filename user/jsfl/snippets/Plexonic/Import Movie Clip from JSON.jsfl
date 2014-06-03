@@ -132,22 +132,18 @@ function modifyMC(layers, MCname, reverse) {
                 case "sprite":
                     if (document.library.itemExists("symbols/" + curElement.libraryName)) {
                         document.library.addItemToDocument({x:0,y:0}, "symbols/" + curElement.libraryName);
-                        document.scaleSelection(curElement.scaleX, curElement.scaleY);
-                        document.skewSelection(curElement.skewX, curElement.skewY);
-                        document.setElementProperty("x",curElement.x);
-                        document.setElementProperty("y",curElement.y);
                     }
                     else {
                         document.library.addNewItem("movie clip", "symbols/" + curElement.libraryName);
                         document.library.addItemToDocument({x:0,y:0}, "symbols/" + curElement.libraryName);
-                        document.scaleSelection(curElement.scaleX, curElement.scaleY);
-                        document.skewSelection(curElement.skewX, curElement.skewY);
-                        document.setElementProperty("x",curElement.x);
-                        document.setElementProperty("y",curElement.y);
                         document.library.editItem("symbols/" + curElement.libraryName);
                         modifyMC(curElement.layers, curElement.libraryName, false);
                         document.library.editItem("symbols/" + MCname);
                     }
+                    document.scaleSelection(curElement.scaleX, curElement.scaleY);
+                    document.skewSelection(curElement.skewX, curElement.skewY);
+                    document.setElementProperty("x",curElement.x);
+                    document.setElementProperty("y",curElement.y);
                     document.setElementProperty("name", curElement.name);
 //                    document.setElementProperty("x",curElement.x);
 //                    document.setElementProperty("y",curElement.y);

@@ -50,15 +50,23 @@ $p.getJsonUri = function () {
 };
 
 $p.crateMovieClipMetadata = function (item, metadata) {
+    var q=1;
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
         //skipping guide layers!
-        if (layer.layerType == 'guide' || layer.layerType=='folder') {
+        if (layer.layerType == 'guide' || layer.layerType == 'folder') {
             continue;
         }
-        var layerObject={};
-        var layerMeta={};
-        layerMeta.name=layer.name;
+        var layerObject = {};
+        var layerMeta = {};
+        if (item.timeline.findLayerIndex(layer.name).length==1)
+            layerMeta.name = layer.name;
+        else
+        {
+            layerMeta.name = layer.name+"_"+q;
+            q++;
+            trace(k);
+        }
         if (layer.parentLayer!=null)
         {
             layerMeta.folder=layer.parentLayer.name;

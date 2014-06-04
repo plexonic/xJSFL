@@ -65,7 +65,6 @@ $p.crateMovieClipMetadata = function (item, metadata) {
         {
             layerMeta.name = layer.name+"_"+q;
             q++;
-            trace(k);
         }
         if (layer.parentLayer!=null)
         {

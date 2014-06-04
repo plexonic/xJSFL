@@ -142,6 +142,7 @@ function modifyMC(layers, MCname, reverse) {
                     }
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);
+                    document.rotateSelection(radToDeg(curElement.rotation));
                     document.setElementProperty("x",curElement.x);
                     document.setElementProperty("y",curElement.y);
                     document.setElementProperty("name", curElement.name);

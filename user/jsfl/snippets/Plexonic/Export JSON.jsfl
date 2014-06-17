@@ -31,9 +31,11 @@ $p.structureJson = "";
 $p.structurize = function (selectedItems) {
     var documentMetadata = {};
     for each (var item in selectedItems) {
-        var itemMetadata = [];
+        var itemMetadata = {};
         documentMetadata[item.itemName] = itemMetadata;
-        $p.crateMovieClipMetadata(item, itemMetadata);
+        itemMetadata.libraryName=item.name;
+        itemMetadata.layers=[];
+        $p.crateMovieClipMetadata(item, itemMetadata.layers);
     }
     $p.structureJson = JSON.encode(documentMetadata);
 };
@@ -216,6 +218,7 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
     elementMetadata.color = $p.formatColor(textAttrs.fillColor);
     elementMetadata.size = textAttrs.size;
     elementMetadata.alignment = textAttrs.alignment;
+
 };
 
 $p.crateElementGenericMetadata = function (element) {

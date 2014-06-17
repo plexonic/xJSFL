@@ -23,11 +23,11 @@ function onAccept(jsonPath, graphicsPath) {
     var movieClips = JSON.decode(json);
     document.library.newFolder("png");
     for (var curMovieClipName in movieClips) {
-        var layers = movieClips[curMovieClipName];
-        if (!document.library.itemExists("symbols/" + curMovieClipName)) {
-            document.library.addNewItem("movie clip", "symbols/" + curMovieClipName);
-            document.library.editItem("symbols/" + curMovieClipName);
-            modifyMC(layers, curMovieClipName, false);
+        var layers = movieClips[curMovieClipName].layers;
+        if (!document.library.itemExists("symbols/" + movieClips[curMovieClipName].libraryName)) {
+            document.library.addNewItem("movie clip", "symbols/" + movieClips[curMovieClipName].libraryName);
+            document.library.editItem("symbols/" + movieClips[curMovieClipName].libraryName);
+            modifyMC(layers, movieClips[curMovieClipName].libraryName, false);
         }
     }
 }

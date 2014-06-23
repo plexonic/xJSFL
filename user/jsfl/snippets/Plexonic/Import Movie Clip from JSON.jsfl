@@ -101,6 +101,13 @@ function modifyMC(layers, MCname, reverse) {
                 case "text":
                     document.addNewText({left: curElement.x, top: curElement.y, right: (curElement.x + curElement.width), bottom: (curElement.y + curElement.height)});
                     document.setTextString(curElement.characters);
+                    document.selection[0].setTextAttr("size", curElement.size);
+                    document.selection[0].setTextAttr("face", curElement.fontFamily);
+                    document.selection[0].setTextAttr("bold", curElement.bold);
+                    document.selection[0].setTextAttr("italic", curElement.italic);
+                    document.selection[0].setTextAttr("fillColor", curElement.color);
+                    document.selection[0].setTextAttr("alignment", curElement.alignment);
+                    document.height = curElement.height;
                     //ToDo:: @javd, @ulix ::: set textFieldProperty from json file!!!
                     document.setElementProperty('textType', 'dynamic');
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
@@ -124,12 +131,6 @@ function modifyMC(layers, MCname, reverse) {
                         curFilters.push({name:filtersToSet[f].name,angle:filtersToSet[f].angle,blurX:filtersToSet[f].blurX,blurY:filtersToSet[f].blurY,distance:filtersToSet[f].distance,color:filtersToSet[f].color,quality:q,strength:filtersToSet[f].strength*100,knockout:false,inner:false,hideObject:false});
                     }
                     document.setFilters(curFilters);
-                    document.selection[0].setTextAttr("face", curElement.fontFamily);
-                    document.selection[0].setTextAttr("bold", curElement.bold);
-                    document.selection[0].setTextAttr("italic", curElement.italic);
-                    document.selection[0].setTextAttr("fillColor", curElement.color);
-                    document.selection[0].setTextAttr("size", curElement.size);
-                    document.selection[0].setTextAttr("alignment", curElement.alignment);
                     break;
                 case "sprite":
                     if (document.library.itemExists("symbols/" + curElement.libraryName)) {

@@ -164,10 +164,10 @@ $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
 };
 
 $p.textFieldCustomMetadataSetter = function (element, elementMetadata) {
-    $p.setElementWidthAndHeightMetadata(element, elementMetadata);
     var textRun = element.textRuns[0];
-    elementMetadata.characters = textRun.characters;
     var textAttrs = textRun.textAttrs;
+    $p.setElementWidthAndHeightMetadata(element, elementMetadata);
+    elementMetadata.characters = textRun.characters;
     $p.setTextFieldAttrsMetadata(textAttrs, elementMetadata);
     $p.setTextFieldFiltersMetadata(element.filters, elementMetadata);
 };

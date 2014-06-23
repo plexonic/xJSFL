@@ -101,6 +101,8 @@ function modifyMC(layers, MCname, reverse) {
                 case "text":
                     document.addNewText({left: curElement.x, top: curElement.y, right: (curElement.x + curElement.width), bottom: (curElement.y + curElement.height)});
                     document.setTextString(curElement.characters);
+                    //ToDo:: @javd, @ulix ::: set textFieldProperty from json file!!!
+                    document.setElementProperty('textType', 'dynamic');
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);
                     document.setElementProperty("name", curElement.name);

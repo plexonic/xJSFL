@@ -37,7 +37,7 @@ $p.structurize = function (selectedItems) {
         itemMetadata.layers=[];
         $p.crateMovieClipMetadata(item, itemMetadata.layers);
     }
-    $p.structureJson = JSON.encode(documentMetadata);
+    $p.structureJson =JSON.formatJson(JSON.encode(documentMetadata));
 };
 
 

@@ -24,9 +24,9 @@ function onAccept(jsonPath, graphicsPath) {
     document.library.newFolder("png");
     for (var curMovieClipName in movieClips) {
         var layers = movieClips[curMovieClipName].layers;
-        if (!document.library.itemExists("symbols/" + movieClips[curMovieClipName].libraryName)) {
-            document.library.addNewItem("movie clip", "symbols/" + movieClips[curMovieClipName].libraryName);
-            document.library.editItem("symbols/" + movieClips[curMovieClipName].libraryName);
+        if (!document.library.itemExists( movieClips[curMovieClipName].libraryName)) {
+            document.library.addNewItem("movie clip",  movieClips[curMovieClipName].libraryName);
+            document.library.editItem( movieClips[curMovieClipName].libraryName);
             modifyMC(layers, movieClips[curMovieClipName].libraryName, false);
         }
     }

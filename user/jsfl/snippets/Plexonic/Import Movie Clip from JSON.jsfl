@@ -21,7 +21,7 @@ function onAccept(jsonPath, graphicsPath) {
     folderURI = URI.toURI(graphicsPath);
     var json = new File(URI.toURI(jsonPath)).contents;
     var movieClips = JSON.decode(json);
-    document.library.newFolder("png");
+    document.library.newFolder("[png]");
     for (var curMovieClipName in movieClips) {
         var layers = movieClips[curMovieClipName].layers;
         if (!document.library.itemExists( movieClips[curMovieClipName].libraryName)) {
@@ -69,7 +69,7 @@ function modifyMC(layers, MCname, reverse) {
                 case "image":
                     var addItem = true;
 
-                    if (document.library.itemExists("png/" + curElement.name)) {
+                    if (document.library.itemExists("[png]/" + curElement.name)) {
                         document.library.selectItem(curElement.name, true);
                     }
                     else {
@@ -78,7 +78,7 @@ function modifyMC(layers, MCname, reverse) {
                             document.importFile(bitmapURI, true);
                             document.library.selectItem(curElement.name + ".png", true);
                             document.library.renameItem(curElement.name);
-                            document.library.moveToFolder("png");
+                            document.library.moveToFolder("[png]");
                         }
                         else {
                             addItem = false;
@@ -87,7 +87,7 @@ function modifyMC(layers, MCname, reverse) {
 
                     }
                     if (addItem) {
-                        document.library.addItemToDocument({x: 0, y: 0}, "png/" + curElement.name);
+                        document.library.addItemToDocument({x: 0, y: 0}, "[png]/" + curElement.name);
                         var image = document.selection[0];
                         image.scaleX = curElement.scaleX;
                         image.scaleY = curElement.scaleY;
@@ -133,15 +133,15 @@ function modifyMC(layers, MCname, reverse) {
                     document.setFilters(curFilters);
                     break;
                 case "sprite":
-                    if (document.library.itemExists("symbols/" + curElement.libraryName)) {
-                        document.library.addItemToDocument({x:0,y:0}, "symbols/" + curElement.libraryName);
+                    if (document.library.itemExists( curElement.libraryName)) {
+                        document.library.addItemToDocument({x:0,y:0}, curElement.libraryName);
                     }
                     else {
-                        document.library.addNewItem("movie clip", "symbols/" + curElement.libraryName);
-                        document.library.addItemToDocument({x:0,y:0}, "symbols/" + curElement.libraryName);
-                        document.library.editItem("symbols/" + curElement.libraryName);
+                        document.library.addNewItem("movie clip", curElement.libraryName);
+                        document.library.addItemToDocument({x:0,y:0}, curElement.libraryName);
+                        document.library.editItem(curElement.libraryName);
                         modifyMC(curElement.layers, curElement.libraryName, false);
-                        document.library.editItem("symbols/" + MCname);
+                        document.library.editItem( MCname);
                     }
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);

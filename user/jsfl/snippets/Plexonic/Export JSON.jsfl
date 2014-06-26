@@ -48,7 +48,7 @@ $p.saveStructure = function () {
 };
 
 $p.getJsonUri = function () {
-    return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
+     return fl.getDocumentDOM().getDataFromDocument("sourceJSONPath");
 };
 
 $p.crateMovieClipMetadata = function (item, metadata) {

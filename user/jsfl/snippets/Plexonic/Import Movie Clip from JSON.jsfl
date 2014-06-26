@@ -16,7 +16,7 @@ var folderURI;
 
 function onAccept(jsonPath) {
     folderURI = URI.toURI( graphicsPathFromJSONPath(jsonPath));
-
+    fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string", jsonPath);
     if(!FLfile.exists(folderURI)){
         alert("Please select JSON file \n included in project! ");
         return;
@@ -88,7 +88,7 @@ function modifyMC(layers, MCname, reverse) {
 
                     }
                     if (addItem) {
-                        document.library.addItemToDocument({x: 0, y: 0}, "[png]/" + curElement.name);
+                        document.library.addItemToDocument({x:curElement.x, y: curElement.y}, "[png]/" + curElement.name);
                         var image = document.selection[0];
                         image.scaleX = curElement.scaleX;
                         image.scaleY = curElement.scaleY;

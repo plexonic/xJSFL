@@ -1,6 +1,5 @@
 xjsfl.init(this);
 
-document = fl.createDocument();
 
 var dialog = new XUL("Choose json file");
 dialog.addTextbox("JSON path", "json_path");
@@ -8,16 +7,16 @@ dialog.addButton("Browse...", "browse");
 dialog.addEvent("browse", "click", onJsonBrowse);
 dialog.show(onAccept);
 
-var folderURI;
-
-//onAccept(
-//    "D:/Projects/dev/as/plexonic/misc/xJSFL/test/button_original.json",
-//    "D:/Projects/dev/as/plexonic/misc/xJSFL/test/graphics/sd");
+var graphicsURI;
 
 function onAccept(jsonPath) {
-    folderURI = URI.toURI( graphicsPathFromJSONPath(jsonPath));
+    document = fl.createDocument();
+
     fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string", jsonPath);
-    if(!FLfile.exists(folderURI)){
+    fl.getDocumentDOM().addDataToDocument("sourceGraphicsFolderPath","string",graphicsFolderPathFromJSONPath(jsonPath));
+
+    graphicsURI = URI.toURI( graphicsPathFromJSONPath(jsonPath));
+    if(!FLfile.exists(graphicsURI)){
         alert("Please select JSON file \n included in project! ");
         return;
     }
@@ -74,7 +73,7 @@ function modifyMC(layers, MCname, reverse) {
                         document.library.selectItem(curElement.name, true);
                     }
                     else {
-                        var bitmapURI = folderURI + "/" + curElement.name + ".png";
+                        var bitmapURI = graphicsURI + "/" + curElement.name + ".png";
                         if (FLfile.exists(bitmapURI)) {
                             document.importFile(bitmapURI, true);
                             document.library.selectItem(curElement.name + ".png", true);
@@ -167,22 +166,30 @@ function radToDeg(angleInRad) {
 }
 function graphicsPathFromJSONPath(jsonPath) {
 
-    var graphicsPath;
+    var graphicsPath = graphicsFolderPathFromJSONPath(jsonPath);
+    var JSONPathArr = jsonPath.split('/');
+    var deviceType = JSONPathArr[JSONPathArr.length - 2];
+    if(deviceType == "ipad"){
+        graphicsPath+="/graphics/sd";
+    }
+    else{
+        graphicsPath+="/graphics";
+    }
+    return graphicsPath;
+}
+function graphicsFolderPathFromJSONPath(jsonPath){
+    var graphicsFolderPath;
     var JSONPathArr = jsonPath.split('/');
     var deviceType = JSONPathArr[JSONPathArr.length - 2];
     var osType = JSONPathArr[JSONPathArr.length - 3];
     var graphicsPathArr = JSONPathArr.slice(0, JSONPathArr.length - 5);
 
-    graphicsPath = graphicsPathArr.join('/');
-    graphicsPath += "/media";
-    graphicsPath +=("/"+ osType);
-    graphicsPath +=("/"+ deviceType);
-    graphicsPath+="/graphics";
+    graphicsFolderPath = graphicsPathArr.join('/');
+    graphicsFolderPath += "/media";
+    graphicsFolderPath +=("/"+ osType);
+    graphicsFolderPath +=("/"+ deviceType);
+    return graphicsFolderPath;
 
-    if(deviceType == "ipad"){
-        graphicsPath+="/sd";
-    }
-    return graphicsPath;
 }
 
 

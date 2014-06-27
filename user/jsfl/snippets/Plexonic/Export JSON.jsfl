@@ -42,6 +42,15 @@ $p.structurize = function (selectedItems) {
 
 
 $p.saveStructure = function () {
+    if($p.getJsonUri()==""){
+        fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string",
+            URI.toPath(fl.browseForFileURL(
+                "save", //
+                "Choose json file location", //
+                "JSON File (*.json)", //
+                "json" //
+            )));
+    }
     var file = new File($p.getJsonUri());
     file.write($p.structureJson);
     file.save();

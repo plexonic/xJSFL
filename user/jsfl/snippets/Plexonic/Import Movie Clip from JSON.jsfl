@@ -38,8 +38,15 @@ function modifyMC(layers, MCname, reverse) {
         timeline.currentLayer = 0;
         var curLayer = layers[i];
         var curLayerInfo = curLayer.layerMeta;
+        var curLayerType;
+        if(curLayerInfo.hasOwnProperty("layerType")){
+            curLayerType = curLayerInfo.layerType;
+        }
+        else {
+            curLayerType = "normal";
+        }
         var folderName = curLayerInfo.folder;
-        timeline.addNewLayer(curLayerInfo.name, "normal", false);
+        timeline.addNewLayer(curLayerInfo.name,curLayerType, false);
         if (folderName != "") {
             if (!timeline.findLayerIndex(folderName)) {
                 timeline.addNewLayer(folderName, "folder");

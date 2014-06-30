@@ -31,6 +31,7 @@ function onAccept(jsonPath) {
             modifyMC(layers, movieClips[curMovieClipName].libraryName, false);
         }
     }
+    alert("Done");
 }
 function modifyMC(layers, MCname, reverse) {
     for (var i = layers.length - 1; i >= 0; i--) {

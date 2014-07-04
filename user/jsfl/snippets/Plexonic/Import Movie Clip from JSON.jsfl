@@ -102,7 +102,6 @@ function modifyMC(layers, MCname, reverse) {
                         image.scaleY = curElement.scaleY;
                         image.skewX = curElement.skewX;
                         image.skewY = curElement.skewY;
-                        image.rotation = radToDeg(curElement.rotation);
                         image.x = curElement.x;
                         image.y = curElement.y;
                     }
@@ -154,13 +153,11 @@ function modifyMC(layers, MCname, reverse) {
                     }
                     document.scaleSelection(curElement.scaleX, curElement.scaleY);
                     document.skewSelection(curElement.skewX, curElement.skewY);
-                    document.rotateSelection(radToDeg(curElement.rotation));
                     document.setElementProperty("x", curElement.x);
                     document.setElementProperty("y", curElement.y);
                     document.setElementProperty("name", curElement.name);
                     document.setInstanceAlpha(curElement.alpha * 100);
 
-                    //document.rotateSelection(radToDeg(curElement.rotation));
 
                     break;
             }
@@ -169,9 +166,6 @@ function modifyMC(layers, MCname, reverse) {
     }
     timeline.deleteLayer(0);
 
-}
-function radToDeg(angleInRad) {
-    return angleInRad * 180 / Math.PI;
 }
 function graphicsPathFromJSONPath(jsonPath) {
 

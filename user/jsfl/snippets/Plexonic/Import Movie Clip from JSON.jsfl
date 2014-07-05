@@ -12,6 +12,7 @@ var graphicsURI;
 function onAccept(jsonPath) {
     document = fl.createDocument();
 
+
     fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string", jsonPath);
     fl.getDocumentDOM().addDataToDocument("sourceGraphicsFolderPath","string",graphicsFolderPathFromJSONPath(jsonPath));
 

@@ -249,6 +249,7 @@ $p.crateElementGenericMetadata = function (element) {
     return metadata;
 };
 
+
 function degToRad(deg) {
     var rad;
     try {

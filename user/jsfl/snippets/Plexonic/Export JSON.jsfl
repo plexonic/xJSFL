@@ -64,6 +64,11 @@ $p.crateMovieClipMetadata = function (item, metadata) {
     var q=1;
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
+        // skip guide layers!
+        if (layer.layerType == 'guide' || layer.layerType == 'folder') {
+            continue;
+        }
+
         var layerObject = {};
         var layerMeta = {};
         if (item.timeline.findLayerIndex(layer.name).length==1)
@@ -79,7 +84,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
         }
         else
             layerMeta.folder="";
-        layerMeta.layerType = layer.layerType;
+        //layerMeta.layerType = layer.layerType;
         layerObject.layerMeta=layerMeta;
         layerObject.children=[];
         for (var j = 0; j < layer.frames.length; j++) {

@@ -241,7 +241,7 @@ $p.crateElementGenericMetadata = function (element) {
         scaleY: Math.round(element.scaleY*1000)/1000
     };
     var skewX = Math.round(degToRad(element.skewX)*1000)/1000;
-    var skewY = math.round(degToRad(element.skewY)*1000)/1000;
+    var skewY = Math.round(degToRad(element.skewY)*1000)/1000;
     var rotation = degToRad(element.rotation);
     if (skewX == skewY &&  skewX == rotation) {
         metadata.skewX = 0;

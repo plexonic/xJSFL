@@ -243,7 +243,7 @@ $p.crateElementGenericMetadata = function (element) {
     var skewX = degToRad(element.skewX);
     var skewY = degToRad(element.skewY);
     var rotation = degToRad(element.rotation);
-    if (skewX == skewY &&  skewX == rotation) {
+    if (Math.abs(skewX - skewY)<0.001 &&  (Math.abs(skewX - rotation)<0.001)) {
         metadata.skewX = 0;
         metadata.skewY = 0;
     }

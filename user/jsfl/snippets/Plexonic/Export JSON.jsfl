@@ -53,11 +53,16 @@ $p.saveStructure = function () {
     }
     var file = new File($p.getJsonUri());
     file.write($p.structureJson);
+    trace($p.getJsonUri());
     file.save();
 };
 
 $p.getJsonUri = function () {
-     return fl.getDocumentDOM().getDataFromDocument("sourceJSONPath");
+
+
+//    return fl.getDocumentDOM().getDataFromDocument("sourceJSONPath");
+    return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
+
 };
 
 $p.crateMovieClipMetadata = function (item, metadata) {

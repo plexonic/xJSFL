@@ -53,7 +53,7 @@ $p.saveStructure = function () {
     }
     var file = new File($p.getJsonUri());
     file.write($p.structureJson);
-    trace($p.getJsonUri());
+    trace("JSON saved in "+$p.getJsonUri());
     file.save();
 };
 

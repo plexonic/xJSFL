@@ -70,7 +70,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
         // skip guide layers!
-        if (layer.layerType == 'guide' || layer.layerType == 'folder') {
+        if (layer.layerType == 'guide' || layer.layerType == 'folder' || layer.name[0] == '.') {
             continue;
         }
 
@@ -92,6 +92,12 @@ $p.crateMovieClipMetadata = function (item, metadata) {
         //layerMeta.layerType = layer.layerType;
         layerObject.layerMeta=layerMeta;
         layerObject.children=[];
+
+        var placeholder = false;
+        if (layer.name[0] == '*') {
+            placeholder = true;
+        }
+
         for (var j = 0; j < layer.frames.length; j++) {
             var frame = layer.frames[j];
             if (j == frame.startFrame) {
@@ -99,7 +105,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
                 for (var k = 0; k < elements.length; k++) {
                     var element = elements[k];
                     // do something with element
-                    $p.crateElementMetadata(element, layerObject.children);
+                    $p.crateElementMetadata(element, layerObject.children, placeholder);
                 }
             }
         }
@@ -109,7 +115,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
     return metadata;
 };
 
-$p.crateElementMetadata = function (element, metadata) {
+$p.crateElementMetadata = function (element, metadata, placeholder) {
     var elementMetadata = $p.crateElementGenericMetadata(element);
     var elementName = "";
 	var elementLibraryName = "";
@@ -124,7 +130,7 @@ $p.crateElementMetadata = function (element, metadata) {
             elementName = element.name;
             elementKind = "sprite";
 			elementLibraryName = element.libraryItem.name;
-            customMetadataSetter = $p.symbolCustomMetadataSetter;
+            customMetadataSetter = placeholder ? null : $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
             elementName = element.name;

@@ -1,3 +1,6 @@
+// ****************************************************************
+// Do not use this script unless it corresponds to the export logic
+//*****************************************************************
 xjsfl.init(this);
 
 document = fl.createDocument();

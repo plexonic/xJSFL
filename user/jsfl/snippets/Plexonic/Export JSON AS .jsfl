@@ -233,18 +233,17 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
     elementMetadata.fontFamily = textAttrs.face;
     elementMetadata.color = $p.formatColor(textAttrs.fillColor);
     elementMetadata.size = textAttrs.size;
+    elementMetadata.leading = textAttrs.lineSpacing;
     elementMetadata.alignment = textAttrs.alignment;
 
 };
 
 $p.crateElementGenericMetadata = function (element) {
     var metadata = {
-
-        x:element.x,
+        x: element.x,
         y: element.y,
         scaleX: element.scaleX,
         scaleY: element.scaleY
-
     };
     var skewX = degToRad(element.skewX);
     var skewY = degToRad(element.skewY);

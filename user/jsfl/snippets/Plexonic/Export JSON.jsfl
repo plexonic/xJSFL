@@ -58,17 +58,15 @@ $p.saveStructure = function () {
 };
 
 $p.getJsonUri = function () {
-
-
 //    return fl.getDocumentDOM().getDataFromDocument("sourceJSONPath");
     return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
-
 };
 
 $p.crateMovieClipMetadata = function (item, metadata) {
     var q=1;
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
+
         // skip guide layers!
         if (layer.layerType == 'guide' || layer.layerType == 'folder' || layer.name[0] == '.') {
             continue;
@@ -239,19 +237,19 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
     elementMetadata.fontFamily = textAttrs.face;
     elementMetadata.color = $p.formatColor(textAttrs.fillColor);
     elementMetadata.size = textAttrs.size;
+    elementMetadata.leading = textAttrs.lineSpacing;
     elementMetadata.alignment = textAttrs.alignment;
 
 };
 
 $p.crateElementGenericMetadata = function (element) {
     var metadata = {
-
         x: element.x,
         y: element.y,
         scaleX: element.scaleX,
         scaleY: element.scaleY
     };
-    var skewX =degToRad(element.skewX);
+    var skewX = degToRad(element.skewX);
     var skewY = degToRad(element.skewY);
     var rotation = degToRad(element.rotation);
     if (Math.abs(skewX - skewY)<0.001 &&  (Math.abs(skewX - rotation)<0.001)) {

@@ -33,16 +33,16 @@ $p.structurize = function (selectedItems) {
     for each (var item in selectedItems) {
         var itemMetadata = {};
         documentMetadata[item.itemName] = itemMetadata;
-        itemMetadata.libraryName=item.name;
-        itemMetadata.layers=[];
+        itemMetadata.libraryName = item.name;
+        itemMetadata.layers = [];
         $p.crateMovieClipMetadata(item, itemMetadata.layers);
     }
-    $p.structureJson =JSON.formatJson(JSON.encode(documentMetadata));
+    $p.structureJson = JSON.formatJson(JSON.encode(documentMetadata));
 };
 
 
 $p.saveStructure = function () {
-    if($p.getJsonUri()==""){
+    if ($p.getJsonUri() == "") {
         fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string",
             URI.toPath(fl.browseForFileURL(
                 "save", //
@@ -53,7 +53,7 @@ $p.saveStructure = function () {
     }
     var file = new File($p.getJsonUri());
     file.write($p.structureJson);
-    trace("JSON saved in "+$p.getJsonUri());
+    trace("JSON saved in " + $p.getJsonUri());
     file.save();
 };
 
@@ -63,7 +63,7 @@ $p.getJsonUri = function () {
 };
 
 $p.crateMovieClipMetadata = function (item, metadata) {
-    var q=1;
+    var q = 1;
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
 
@@ -74,22 +74,20 @@ $p.crateMovieClipMetadata = function (item, metadata) {
 
         var layerObject = {};
         var layerMeta = {};
-        if (item.timeline.findLayerIndex(layer.name).length==1)
+        if (item.timeline.findLayerIndex(layer.name).length == 1)
             layerMeta.name = layer.name;
-        else
-        {
-            layerMeta.name = layer.name+"_"+q;
+        else {
+            layerMeta.name = layer.name + "_" + q;
             q++;
         }
-        if (layer.parentLayer!=null)
-        {
-            layerMeta.folder=layer.parentLayer.name;
+        if (layer.parentLayer != null) {
+            layerMeta.folder = layer.parentLayer.name;
         }
         else
-            layerMeta.folder="";
+            layerMeta.folder = "";
         //layerMeta.layerType = layer.layerType;
-        layerObject.layerMeta=layerMeta;
-        layerObject.children=[];
+        layerObject.layerMeta = layerMeta;
+        layerObject.children = [];
 
         var placeholder = false;
         if (layer.name[0] == '*') {
@@ -116,7 +114,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
 $p.crateElementMetadata = function (element, metadata, placeholder) {
     var elementMetadata = $p.crateElementGenericMetadata(element);
     var elementName = "";
-	var elementLibraryName = "";
+    var elementLibraryName = "";
     var elementKind = "";
     var customMetadataSetter = null;
     switch (getElementType(element)) {
@@ -127,7 +125,7 @@ $p.crateElementMetadata = function (element, metadata, placeholder) {
         case ELEMENT_TYPE_SYMBOL:
             elementName = element.name;
             elementKind = "sprite";
-			elementLibraryName = element.libraryItem.name;
+            elementLibraryName = element.libraryItem.name;
             customMetadataSetter = placeholder ? null : $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
@@ -164,7 +162,7 @@ $p.shapeCustomMetadataSetter = function (element, elementMetadata) {
 };
 
 $p.formatColor = function (colorString) {
-    return "0x" + colorString.substr(1, colorString.length-1);
+    return "0x" + colorString.substr(1, colorString.length - 1);
 };
 
 $p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {
@@ -174,12 +172,12 @@ $p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {
 
 $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
     elementMetadata.alpha = element.colorAlphaPercent * .01;
-    elementMetadata.layers = $p.crateMovieClipMetadata(element.libraryItem,[]);
+    elementMetadata.layers = $p.crateMovieClipMetadata(element.libraryItem, []);
 };
 
 $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
     elementMetadata.name = name;
-	elementMetadata.libraryName = libraryName;
+    elementMetadata.libraryName = libraryName;
     elementMetadata.kind = kind;
 };
 
@@ -234,7 +232,12 @@ $p.formatFilterQuality = function (quality) {
 $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
     elementMetadata.bold = textAttrs.bold;
     elementMetadata.italic = textAttrs.italic;
+
     elementMetadata.fontFamily = textAttrs.face;
+    if (elementMetadata.bold == true && textAttrs.face.indexOf(" Bold") == -1) {
+        elementMetadata.fontFamily += " Bold";
+    }
+
     elementMetadata.color = $p.formatColor(textAttrs.fillColor);
     elementMetadata.size = textAttrs.size;
     elementMetadata.leading = textAttrs.lineSpacing;
@@ -252,11 +255,11 @@ $p.crateElementGenericMetadata = function (element) {
     var skewX = degToRad(element.skewX);
     var skewY = degToRad(element.skewY);
     var rotation = degToRad(element.rotation);
-    if (Math.abs(skewX - skewY)<0.001 &&  (Math.abs(skewX - rotation)<0.001)) {
+    if (Math.abs(skewX - skewY) < 0.001 && (Math.abs(skewX - rotation) < 0.001)) {
         metadata.skewX = 0;
         metadata.skewY = 0;
     }
-    else{
+    else {
         metadata.skewX = skewX;
         metadata.skewY = skewY;
     }

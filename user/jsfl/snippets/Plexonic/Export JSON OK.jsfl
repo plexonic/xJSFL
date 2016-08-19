@@ -31,12 +31,12 @@ $p.structureJson = "";
 $p.structurize = function (selectedItems, skipFilter, renameFilter) {
     var documentMetadata = {};
     for each (var item in selectedItems) {
-        if(item.name.indexOf("ext_"+skipFilter+"_") != -1) {
+        if (item.name.indexOf("ext_" + skipFilter + "_") != -1) {
             continue;
         }
         var itemMetadata = {};
-        documentMetadata[$p.filterName(item.itemName, "_"+renameFilter+"_")] = itemMetadata;
-        itemMetadata.libraryName = $p.filterName(item.name, "_"+renameFilter+"_");
+        documentMetadata[$p.filterName(item.itemName, "_" + renameFilter + "_")] = itemMetadata;
+        itemMetadata.libraryName = $p.filterName(item.name, "_" + renameFilter + "_");
         itemMetadata.layers = [];
         $p.crateMovieClipMetadata(item, itemMetadata.layers);
     }
@@ -48,8 +48,8 @@ $p.filterName = function (name, xxx) {
 }
 
 
-    $p.saveStructure = function () {
-    if ($p.getJsonUri() == "") {
+$p.saveStructure = function (renameFilter) {
+    if ($p.getJsonUri(renameFilter) == "") {
         fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string",
             URI.toPath(fl.browseForFileURL(
                 "save", //
@@ -58,15 +58,15 @@ $p.filterName = function (name, xxx) {
                 "json" //
             )));
     }
-    var file = new File($p.getJsonUri());
+    var file = new File($p.getJsonUri(renameFilter));
     file.write($p.structureJson);
-    trace("JSON saved in " + $p.getJsonUri());
+    trace("JSON saved in " + $p.getJsonUri(renameFilter));
     file.save();
 };
 
-$p.getJsonUri = function () {
+$p.getJsonUri = function (renameFilter) {
 //    return fl.getDocumentDOM().getDataFromDocument("sourceJSONPath");
-    return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
+    return $dom.pathURI.replace("media", "resources/structures").replace("fla/web", "web/" + renameFilter).replace(".fla", ".json");
 };
 
 $p.crateMovieClipMetadata = function (item, metadata) {
@@ -313,8 +313,8 @@ function getElementType(element) {
     xjsfl.init(this);
     var elements = $$("ext_*").elements;
     var structurizer = new JsonStructurizer();
-    structurizer.structurize(elements, "fb","ok");
-    structurizer.saveStructure();
+    structurizer.structurize(elements, "fb", "ok");
+    structurizer.saveStructure("ok");
     alert("Done!");
 
 })();

@@ -140,6 +140,11 @@ $p.crateElementMetadata = function (element, metadata, placeholder) {
             elementKind = "text";
             customMetadataSetter = $p.textFieldCustomMetadataSetter;
             break;
+        case ELEMENT_TYPE_HITAREA_SHAPE:
+            elementName = element.name;
+            elementKind = "hitarea";
+            customMetadataSetter = $p.hitAreaShapeCustomMetadataSetter;
+            break;
         case ELEMENT_TYPE_SHAPE:
             elementName = element.name;
             elementKind = "quad";
@@ -159,6 +164,17 @@ $p.setElementSpecificMetadata = function (name, libraryName, kind, element, elem
     if (customMetadataSetter) {
         customMetadataSetter(element, elementMetadata);
     }
+};
+
+$p.hitAreaShapeCustomMetadataSetter = function (element, elementMetadata) {
+	var vertices = [];
+	for (var i = 0; i < element.vertices.length; i++) {
+        vertices[i] = {x:element.vertices[i].x,y:element.vertices[i].y};
+	}
+	elementMetadata.vertices = vertices;
+
+    elementMetadata.x = 0;
+    elementMetadata.y = 0;
 };
 
 $p.shapeCustomMetadataSetter = function (element, elementMetadata) {
@@ -301,12 +317,17 @@ function getElementType(element) {
             if (element.toString() == "[object Text]") {
                 return ELEMENT_TYPE_TEXTFIELD;
             } else if (element.elementType == "shape") {
-                return ELEMENT_TYPE_SHAPE;
+                return isHitAreaType(element) ? ELEMENT_TYPE_HITAREA_SHAPE :ELEMENT_TYPE_SHAPE;
             }
             return ELEMENT_TYPE_UNDEFINED;
             break;
     }
     return null;
+}
+
+//we consider that shapes without fill are just hit areas...
+function isHitAreaType(element) {
+	return element.contours[1].fill.color == null;
 }
 
 (function () {

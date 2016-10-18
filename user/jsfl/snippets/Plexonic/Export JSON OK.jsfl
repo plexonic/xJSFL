@@ -194,7 +194,7 @@ $p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {
 };
 
 $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
-    elementMetadata.alpha = element.colorAlphaPercent * .01;
+    elementMetadata.alpha = element.colorAlphaPercent * 0.01;
     elementMetadata.layers = $p.crateMovieClipMetadata(element.libraryItem, []);
 };
 
@@ -231,7 +231,7 @@ $p.setTextFieldFiltersMetadata = function (filters, elementMetadata) {
             distance: filter.distance,
             color: $p.formatColor(filter.color),
             quality: $p.formatFilterQuality(filter.quality),
-            strength: filter.strength * .01
+            strength: filter.strength * 0.01
         });
     }
     elementMetadata.filters = filtersMetadata;

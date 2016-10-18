@@ -161,12 +161,17 @@ $p.setElementSpecificMetadata = function (name, libraryName, kind, element, elem
 };
 
 $p.hitAreaShapeCustomMetadataSetter = function (element, elementMetadata) {
-	var vertices = [];
-	for (var i = 0; i < element.vertices.length; i++) {
-        vertices[i] = {x:element.vertices[i].x,y:element.vertices[i].y};
-	}
-	elementMetadata.vertices = vertices;
-
+    var vertices = [];
+    var halfEdge = element.vertices[0].getHalfEdge();
+    var startId = halfEdge.id;
+    var id = 0;
+    while (id != startId) {
+        var vertex = halfEdge.getVertex();
+        halfEdge = halfEdge.getPrev();
+        vertices.push( {x: vertex.x, y: vertex.y});
+        id = halfEdge.id;
+    }
+    elementMetadata.vertices = vertices;
     elementMetadata.x = 0;
     elementMetadata.y = 0;
 };
@@ -311,7 +316,7 @@ function getElementType(element) {
             if (element.toString() == "[object Text]") {
                 return ELEMENT_TYPE_TEXTFIELD;
             } else if (element.elementType == "shape") {
-                return isHitAreaType(element) ? ELEMENT_TYPE_HITAREA_SHAPE :ELEMENT_TYPE_SHAPE;
+                return isHitAreaType(element) ? ELEMENT_TYPE_HITAREA_SHAPE : ELEMENT_TYPE_SHAPE;
             }
             return ELEMENT_TYPE_UNDEFINED;
             break;
@@ -321,7 +326,7 @@ function getElementType(element) {
 
 //we consider that shapes without fill are just hit areas...
 function isHitAreaType(element) {
-	return element.contours[1].fill.color == null;
+    return element.contours[1].fill.color == null;
 }
 
 (function () {

@@ -1,4 +1,4 @@
-﻿﻿/*
+﻿/*
  * Copyright Teoken LLC. (c) 2013. All rights reserved.
  * Copying or usage of any piece of this source code without written notice from Teoken LLC is a major crime.
  * Այս կոդը Թեոկեն ՍՊԸ ընկերության սեփականությունն է:
@@ -102,6 +102,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
                 for (var k = 0; k < elements.length; k++) {
                     var element = elements[k];
                     // do something with element
+                    // trace(item.name); traceing item name in case of error
                     $p.crateElementMetadata(element, layerObject.children, placeholder);
                 }
             }
@@ -168,7 +169,7 @@ $p.hitAreaShapeCustomMetadataSetter = function (element, elementMetadata) {
     while (id != startId) {
         var vertex = halfEdge.getVertex();
         halfEdge = halfEdge.getPrev();
-        vertices.push( {x: vertex.x, y: vertex.y});
+        vertices.push({x: vertex.x, y: vertex.y});
         id = halfEdge.id;
     }
     elementMetadata.vertices = vertices;

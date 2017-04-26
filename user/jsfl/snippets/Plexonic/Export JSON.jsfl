@@ -36,7 +36,7 @@ $p.structurize = function (selectedItems) {
         documentMetadata[item.itemName] = itemMetadata;
         itemMetadata.libraryName = item.name;
         itemMetadata.layers = [];
-        $p.crateMovieClipMetadata(item, itemMetadata.layers);
+        $p.createMovieClipMetadata(item, itemMetadata.layers);
     }
     $p.structureJson = JSON.formatJson(JSON.encode(documentMetadata));
 };
@@ -63,7 +63,7 @@ $p.getJsonUri = function () {
     return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
 };
 
-$p.crateMovieClipMetadata = function (item, metadata) {
+$p.createMovieClipMetadata = function (item, metadata) {
     var q = 1;
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
@@ -103,7 +103,7 @@ $p.crateMovieClipMetadata = function (item, metadata) {
                     var element = elements[k];
                     // do something with element
                     // trace(item.name); traceing item name in case of error
-                    $p.crateElementMetadata(element, layerObject.children, placeholder);
+                    $p.createElementMetadata(element, layerObject.children, placeholder);
                 }
             }
         }
@@ -113,21 +113,24 @@ $p.crateMovieClipMetadata = function (item, metadata) {
     return metadata;
 };
 
-$p.crateElementMetadata = function (element, metadata, placeholder) {
-    var elementMetadata = $p.crateElementGenericMetadata(element);
+$p.createElementMetadata = function (element, metadata, placeholder) {
+    var elementItem = element.libraryItem;
+    var elementMetadata = $p.createElementGenericMetadata(element);
     var elementName = "";
     var elementLibraryName = "";
     var elementKind = "";
     var customMetadataSetter = null;
+
     switch (getElementType(element)) {
         case ELEMENT_TYPE_BITMAP:
-            elementName = (new File(element.libraryItem.name)).name;
+            elementName = (new File(elementItem.name)).name;
             elementKind = "image";
+            customMetadataSetter = $p.imageCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_SYMBOL:
             elementName = element.name;
             elementKind = "sprite";
-            elementLibraryName = element.libraryItem.name;
+            elementLibraryName = elementItem.name;
             customMetadataSetter = placeholder ? null : $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
@@ -194,13 +197,36 @@ $p.setElementWidthAndHeightMetadata = function (element, elementMetadata) {
 };
 
 $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
-    elementMetadata.alpha = element.colorAlphaPercent * 0.01;
-    elementMetadata.layers = $p.crateMovieClipMetadata(element.libraryItem, []);
+    if (element.colorAlphaPercent != 100) {
+        elementMetadata.alpha = element.colorAlphaPercent * 0.01;
+    }
+    elementMetadata.layers = $p.createMovieClipMetadata(element.libraryItem, []);
 };
+
+$p.imageCustomMetadataSetter = function (element, elementMetadata) {
+    var rect = element.libraryItem.scalingGridRect;
+    if (rect && element.libraryItem.itemType != "graphic") { //graphic type lirbrary item have a messed up grid value
+        elementMetadata.grid = {
+            x: rect.left,
+            y: rect.top,
+            width: parseFloat((rect.right - rect.left).toFixed(4)),
+            height: parseFloat((rect.bottom - rect.top).toFixed(4))
+        }
+    }
+
+    if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
+        elementMetadata.alpha = element.colorAlphaPercent * 0.01;
+    }
+};
+
 
 $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
     elementMetadata.name = name;
-    elementMetadata.libraryName = libraryName;
+
+    if (libraryName != "") {
+        elementMetadata.libraryName = libraryName;
+    }
+
     elementMetadata.kind = kind;
 };
 
@@ -268,24 +294,22 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
 
 };
 
-$p.crateElementGenericMetadata = function (element) {
+$p.createElementGenericMetadata = function (element) {
     var metadata = {
-        x: element.x,
-        y: element.y,
-        scaleX: element.scaleX,
-        scaleY: element.scaleY
+        x: parseFloat(element.x.toFixed(2)),
+        y: parseFloat(element.y.toFixed(2)),
+        scaleX: parseFloat(element.scaleX.toFixed(4)),
+        scaleY: parseFloat(element.scaleY.toFixed(4))
     };
-    var skewX = degToRad(element.skewX);
-    var skewY = degToRad(element.skewY);
+    var skewX = parseFloat(degToRad(element.skewX).toFixed(4));
+    var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
     var rotation = degToRad(element.rotation);
-    if (Math.abs(skewX - skewY) < 0.001 && (Math.abs(skewX - rotation) < 0.001)) {
-        metadata.skewX = 0;
-        metadata.skewY = 0;
-    }
-    else {
+
+    if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001 && (Math.abs(skewX - rotation) >= 0.001))) {
         metadata.skewX = skewX;
         metadata.skewY = skewY;
     }
+
     metadata.rotation = rotation;
     return metadata;
 };
@@ -311,6 +335,9 @@ function getElementType(element) {
             return ELEMENT_TYPE_BITMAP;
             break;
         case "symbol":
+            if (element.libraryItem.scalingGrid || element.libraryItem.itemType == "graphic") {
+                return ELEMENT_TYPE_BITMAP;
+            }
             return ELEMENT_TYPE_SYMBOL;
             break;
         case undefined:

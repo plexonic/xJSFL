@@ -29,21 +29,30 @@ $p.rootFolder = "_structures/";
 $p.structureJson = "";
 
 
-$p.structurize = function (selectedItems) {
+$p.structurize = function (selectedItems, skipFilter, renameFilter) {
     var documentMetadata = {};
     for each (var item in selectedItems) {
+        if (skipFilter != null && item.name.indexOf("ext_" + skipFilter + "_") != -1) {
+            continue;
+        }
+
         var itemMetadata = {};
-        documentMetadata[item.itemName] = itemMetadata;
-        itemMetadata.libraryName = item.name;
+        var processedName = skipFilter != null && renameFilter != null ? $p.getProcessedName(item.itemName, "_" + renameFilter + "_") : item.itemName;
+        documentMetadata[processedName] = itemMetadata;
+
+        itemMetadata.libraryName = renameFilter != null ? $p.getProcessedName(item.name, "_" + renameFilter + "_") : item.name;
         itemMetadata.layers = [];
         $p.createMovieClipMetadata(item, itemMetadata.layers);
     }
     $p.structureJson = JSON.formatJson(JSON.encode(documentMetadata));
 };
 
+$p.getProcessedName = function (name, stringToReplace) {
+    return name.split(stringToReplace).join("_");
+};
 
-$p.saveStructure = function () {
-    if ($p.getJsonUri() == "") {
+$p.saveStructure = function (renameFilter) {
+    if ($p.getJsonUri(renameFilter) == "") {
         fl.getDocumentDOM().addDataToDocument("sourceJSONPath", "string",
             URI.toPath(fl.browseForFileURL(
                 "save", //
@@ -52,15 +61,18 @@ $p.saveStructure = function () {
                 "json" //
             )));
     }
-    var file = new File($p.getJsonUri());
+    var file = new File($p.getJsonUri(renameFilter));
     file.write($p.structureJson);
-    trace("JSON saved in " + $p.getJsonUri());
+    trace("JSON saved in " + $p.getJsonUri(renameFilter));
     file.save();
 };
 
-$p.getJsonUri = function () {
-//    return fl.getDocumentDOM().getDataFromDocument("sourceJSONPath");
-    return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
+$p.getJsonUri = function (renameFilter) {
+    if (renameFilter) {
+        return $dom.pathURI.replace("media", "resources/structures").replace("fla/web", "web/" + renameFilter).replace(".fla", ".json");
+    } else {
+        return $dom.pathURI.replace("media", "resources/structures").replace("fla/", "").replace(".fla", ".json");
+    }
 };
 
 $p.createMovieClipMetadata = function (item, metadata) {
@@ -359,10 +371,28 @@ function isHitAreaType(element) {
 
 (function () {
     xjsfl.init(this);
+    structurizer = new JsonStructurizer();
+
     var elements = $$("ext_*").elements;
-    var structurizer = new JsonStructurizer();
-    structurizer.structurize(elements);
-    structurizer.saveStructure();
-    alert("Done!");
+    var fbOkMode = false;
+    for (var i = 0, len = elements.length; i < len; ++i) {
+        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+            fbOkMode = true;
+            break;
+        }
+    }
+
+    if (fbOkMode) {
+        structurizer.structurize(elements, "ok", "fb");
+        structurizer.saveStructure("fb");
+
+        structurizer.structurize(elements, "fb", "ok");
+        structurizer.saveStructure("ok");
+        alert("EXPORT COMPLETE\n FB & OK");
+    } else {
+        structurizer.structurize(elements);
+        structurizer.saveStructure();
+        alert("EXPORT COMPLETE");
+    }
 
 })();

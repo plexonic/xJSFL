@@ -1,4 +1,4 @@
-﻿﻿/*
+﻿/*
  * Copyright Teoken LLC. (c) 2013. All rights reserved.
  * Copying or usage of any piece of this source code without written notice from Teoken LLC is a major crime.
  * Այս կոդը Թեոկեն ՍՊԸ ընկերության սեփականությունն է:
@@ -176,8 +176,12 @@ $p.getItemUsages = function (checkItem) {
             this.checkItemExistenceInside(item, checkItemName, checkItemType);
         }
     }
+    var finalCount = this.foundCount;
+
     trace("------------------------------- FOUND: " + this.foundCount + "\n");
     this.foundCount = 0;
+
+    return finalCount;
 };
 
 $p.checkItemExistenceInside = function (item, checkItemName, checkItemType) {
@@ -289,7 +293,7 @@ $p.exportSpriteForAS = function (item, spriteName) {
         return;
     }
     var item = selected[0];
-    util.getItemUsages(item);
+    var finalCount = util.getItemUsages(item);
 
-    alert("Search Is Done!");
+    alert("SEARCH COMPLETE\n\nItem: " + $p.getNameFromURI(item.name) + "\nUsages: " + finalCount);
 })();

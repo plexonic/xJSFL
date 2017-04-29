@@ -388,7 +388,7 @@ function isHitAreaType(element) {
 
         structurizer.structurize(elements, "fb", "ok");
         structurizer.saveStructure("ok");
-        alert("EXPORT COMPLETE\n FB & OK");
+        alert("EXPORT COMPLETE\nFB & OK");
     } else {
         structurizer.structurize(elements);
         structurizer.saveStructure();

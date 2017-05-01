@@ -218,11 +218,12 @@ $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
 $p.imageCustomMetadataSetter = function (element, elementMetadata) {
     var rect = element.libraryItem.scalingGridRect;
     if (rect && element.libraryItem.itemType != "graphic") { //graphic type lirbrary item have a messed up grid value
+
         elementMetadata.grid = {
-            x: rect.left,
-            y: rect.top,
-            width: parseFloat((rect.right - rect.left).toFixed(4)),
-            height: parseFloat((rect.bottom - rect.top).toFixed(4))
+            x: rect.left < 0 ? 0 : rect.left,
+            y: rect.top < 0 ? 0 : rect.top,
+            width: rect.left < 0 ? 0 : parseFloat((rect.right - rect.left).toFixed(4)),
+            height: rect.top < 0 ? 0 : parseFloat((rect.bottom - rect.top).toFixed(4))
         }
     }
 
@@ -235,9 +236,9 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
 $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
     elementMetadata.name = name;
 
-    if (libraryName != "") {
-        elementMetadata.libraryName = libraryName;
-    }
+    //if (libraryName != "") {
+    //    elementMetadata.libraryName = libraryName;
+    //}
 
     elementMetadata.kind = kind;
 };

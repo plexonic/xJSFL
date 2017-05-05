@@ -255,7 +255,6 @@ $p.textFieldCustomMetadataSetter = function (element, elementMetadata) {
 
 $p.setTextFieldFiltersMetadata = function (filters, elementMetadata) {
     if (!filters) {
-        elementMetadata.filters = [];
         return;
     }
     var filtersMetadata = [];

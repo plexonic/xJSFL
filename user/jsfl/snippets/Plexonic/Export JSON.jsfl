@@ -63,7 +63,7 @@ $p.saveStructure = function (renameFilter) {
     }
     var file = new File($p.getJsonUri(renameFilter));
     file.write($p.structureJson);
-    trace("JSON saved in " + $p.getJsonUri(renameFilter));
+    trace("[" + new Date().toLocaleTimeString() + "] JSON saved: " + $p.getJsonUri(renameFilter));
     file.save();
 };
 

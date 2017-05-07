@@ -86,20 +86,26 @@ $p.createMovieClipMetadata = function (item, metadata) {
         }
 
         var layerObject = {};
-        var layerMeta = {};
-        if (item.timeline.findLayerIndex(layer.name).length == 1)
-            layerMeta.name = layer.name;
-        else {
-            layerMeta.name = layer.name + "_" + q;
-            q++;
-        }
-        if (layer.parentLayer != null) {
-            layerMeta.folder = layer.parentLayer.name;
-        }
-        else
-            layerMeta.folder = "";
+
+        //UNCOMMENT IF NEEDED
+        //------------------------------
+        //var layerMeta = {};
+        //if (item.timeline.findLayerIndex(layer.name).length == 1)
+        //    layerMeta.name = layer.name;
+        //else {
+        //    layerMeta.name = layer.name + "_" + q;
+        //    q++;
+        //}
+        //if (layer.parentLayer != null) {
+        //    layerMeta.folder = layer.parentLayer.name;
+        //}
+        //else{
+        //    layerMeta.folder = "";
+        //}
         //layerMeta.layerType = layer.layerType;
-        layerObject.layerMeta = layerMeta;
+        //layerObject.layerMeta = layerMeta;
+        //------------------------------
+
         layerObject.children = [];
 
         var placeholder = false;
@@ -135,14 +141,15 @@ $p.createElementMetadata = function (element, metadata, placeholder) {
 
     switch (getElementType(element)) {
         case ELEMENT_TYPE_BITMAP:
-            elementName = (new File(elementItem.name)).name;
+            elementLibraryName = (new File(elementItem.name)).name;
+            elementName = element.name;
             elementKind = "image";
             customMetadataSetter = $p.imageCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_SYMBOL:
+            //elementLibraryName = (new File(elementItem.name)).name;
             elementName = element.name;
             elementKind = "sprite";
-            elementLibraryName = elementItem.name;
             customMetadataSetter = placeholder ? null : $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
@@ -234,11 +241,13 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
 
 
 $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
-    elementMetadata.name = name;
+    if (name != "") {
+        elementMetadata.instanceName = name;
+    }
 
-    //if (libraryName != "") {
-    //    elementMetadata.libraryName = libraryName;
-    //}
+    if (libraryName != "") {
+        elementMetadata.libraryName = libraryName;
+    }
 
     elementMetadata.kind = kind;
 };

@@ -316,22 +316,43 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
 };
 
 $p.createElementGenericMetadata = function (element) {
-    var metadata = {
-        x: parseFloat(element.x.toFixed(2)),
-        y: parseFloat(element.y.toFixed(2)),
-        scaleX: parseFloat(element.scaleX.toFixed(4)),
-        scaleY: parseFloat(element.scaleY.toFixed(4))
-    };
+    var metadata = {};
+
+    var x = parseFloat(element.x.toFixed(2));
+    var y = parseFloat(element.y.toFixed(2));
+
+    var scaleX = parseFloat(element.scaleX.toFixed(4));
+    var scaleY = parseFloat(element.scaleY.toFixed(4));
     var skewX = parseFloat(degToRad(element.skewX).toFixed(4));
     var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
-    var rotation = degToRad(element.rotation);
+    var rotation = degToRad(element.rotation.toFixed(4));
+
+    if (x != 0) {
+        metadata.x = x;
+    }
+
+    if (y != 0) {
+        metadata.y = y;
+    }
+
+    if (scaleX != 1) {
+        metadata.scaleX = scaleX;
+    }
+
+    if (scaleY != 1) {
+        metadata.scaleY = scaleY;
+    }
+
 
     if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001 && (Math.abs(skewX - rotation) >= 0.001))) {
         metadata.skewX = skewX;
         metadata.skewY = skewY;
     }
 
-    metadata.rotation = rotation;
+    if (rotation != 0) {
+        metadata.rotation = rotation;
+    }
+
     return metadata;
 };
 

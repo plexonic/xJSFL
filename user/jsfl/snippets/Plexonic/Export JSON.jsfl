@@ -325,7 +325,7 @@ $p.createElementGenericMetadata = function (element) {
     var scaleY = parseFloat(element.scaleY.toFixed(4));
     var skewX = parseFloat(degToRad(element.skewX).toFixed(4));
     var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
-    var rotation = degToRad(element.rotation.toFixed(4));
+    var rotation = parseFloat(degToRad(element.rotation.toFixed(4)));
 
     if (x != 0) {
         metadata.x = x;
@@ -343,8 +343,8 @@ $p.createElementGenericMetadata = function (element) {
         metadata.scaleY = scaleY;
     }
 
-
-    if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001 && (Math.abs(skewX - rotation) >= 0.001))) {
+    //if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001 && (Math.abs(skewX - rotation) >= 0.001))) {
+    if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
         metadata.skewX = skewX;
         metadata.skewY = skewY;
     }

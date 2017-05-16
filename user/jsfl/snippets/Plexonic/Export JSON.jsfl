@@ -357,12 +357,19 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
     //var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
     //var rotation = parseFloat(degToRad(element.rotation.toFixed(4)));
 
-    if (x != 0) {
-        metadata.pivotX = -x;
+    element.setTransformationPoint({x: 60, y: 25});
+    var cos = Math.cos(degToRad(element.rotation));
+    var sin = Math.sin(degToRad(element.rotation));
+    var pivotX = ((x * cos + y * sin) / element.scaleX).toFixed(4);
+    var pivotY = ((x * (-sin ) + y * cos) / element.scaleY).toFixed(4);
+    trace("rotataion = " + element.rotation + " X = " + x + " Y = " + y + " cos = " + cos + " sin = " + sin);
+    trace("pivotX = " + pivotX + " pivotY = " + pivotY);
+    if (pivotX != 0) {
+        metadata.pivotX = pivotX;
     }
 
-    if (y != 0) {
-        metadata.pivotY = -y;
+    if (pivotY != 0) {
+        metadata.pivotY = pivotY;
     }
 
     //if (scaleX != 1) {

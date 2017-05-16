@@ -40,9 +40,16 @@ $p.structurize = function (selectedItems, skipFilter, renameFilter) {
         var processedName = skipFilter != null && renameFilter != null ? $p.getProcessedName(item.itemName, "_" + renameFilter + "_") : item.itemName;
         documentMetadata[processedName] = itemMetadata;
 
-        itemMetadata.libraryName = renameFilter != null ? $p.getProcessedName(item.name, "_" + renameFilter + "_") : item.name;
-        itemMetadata.layers = [];
-        $p.createMovieClipMetadata(item, itemMetadata.layers);
+        if (item.itemType == "graphic") {
+            itemMetadata.image = {};
+            $p.createImageMetadata(item, itemMetadata.image);
+        }
+        else {
+            //itemMetadata.libraryName = renameFilter != null ? $p.getProcessedName(item.name, "_" + renameFilter + "_") : item.name;
+            itemMetadata.layers = [];
+            $p.createMovieClipMetadata(item, itemMetadata.layers);
+        }
+
     }
     $p.structureJson = JSON.formatJson(JSON.encode(documentMetadata));
 };
@@ -75,8 +82,33 @@ $p.getJsonUri = function (renameFilter) {
     }
 };
 
-$p.createMovieClipMetadata = function (item, metadata) {
+$p.createImageMetadata = function (item, metadata) {
+
+    for (var i = 0; i < item.timeline.layers.length; i++) {
+        var layer = item.timeline.layers[i];
+
+        // skip guide layers!
+        if (layer.layerType == 'guide' || layer.layerType == 'folder' || layer.name[0] == '.') {
+            continue;
+        }
+
+        var frame = layer.frames[0];
+        var elements = frame.elements;
+        var element = elements[0];
+
+        var elementItem = element.libraryItem;
+        $p.createExtractableImageGenericMetadata(element, metadata);
+        metadata.libraryName = (new File(elementItem.name)).name;
+        return metadata;
+    }
+
+    alert("No image found in Graphic.");
+};
+
+$p.createMovieClipMetadata = function (item, metadata, image) {
     var q = 1;
+
+
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
 
@@ -111,6 +143,7 @@ $p.createMovieClipMetadata = function (item, metadata) {
         var placeholder = false;
         if (layer.name[0] == '*') {
             placeholder = true;
+            alert(1);
         }
 
         for (var j = 0; j < layer.frames.length; j++) {
@@ -147,7 +180,6 @@ $p.createElementMetadata = function (element, metadata, placeholder) {
             customMetadataSetter = $p.imageCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_SYMBOL:
-            //elementLibraryName = (new File(elementItem.name)).name;
             elementName = element.name;
             elementKind = "sprite";
             customMetadataSetter = placeholder ? null : $p.symbolCustomMetadataSetter;
@@ -315,6 +347,44 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
 
 };
 
+$p.createExtractableImageGenericMetadata = function (element, metadata) {
+    var x = parseFloat(element.x.toFixed(2));
+    var y = parseFloat(element.y.toFixed(2));
+
+    //var scaleX = parseFloat(element.scaleX.toFixed(4));
+    //var scaleY = parseFloat(element.scaleY.toFixed(4));
+    //var skewX = parseFloat(degToRad(element.skewX).toFixed(4));
+    //var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
+    //var rotation = parseFloat(degToRad(element.rotation.toFixed(4)));
+
+    if (x != 0) {
+        metadata.pivotX = -x;
+    }
+
+    if (y != 0) {
+        metadata.pivotY = -y;
+    }
+
+    //if (scaleX != 1) {
+    //    metadata.scaleX = scaleX;
+    //}
+    //
+    //if (scaleY != 1) {
+    //    metadata.scaleY = scaleY;
+    //}
+
+    //if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
+    //    metadata.skewX = skewX;
+    //    metadata.skewY = skewY;
+    //}
+
+    //if (rotation != 0) {
+    //    metadata.rotation = rotation;
+    //}
+
+    return metadata;
+};
+
 $p.createElementGenericMetadata = function (element) {
     var metadata = {};
 
@@ -424,5 +494,37 @@ function isHitAreaType(element) {
         structurizer.saveStructure();
         alert("EXPORT COMPLETE");
     }
+
+    //var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
+    //var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
+    //
+    //for (var k = 0; k < fileList.length; ++k) {
+    //    var doc = fl.openDocument(flaFolder + fileList[k]);
+    //
+    //    var elements = $$("ext_*").elements;
+    //    var fbOkMode = false;
+    //    for (var i = 0, len = elements.length; i < len; ++i) {
+    //        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+    //            fbOkMode = true;
+    //            break;
+    //        }
+    //    }
+    //
+    //    if (fbOkMode) {
+    //        structurizer.structurize(elements, "ok", "fb");
+    //        structurizer.saveStructure("fb");
+    //
+    //        structurizer.structurize(elements, "fb", "ok");
+    //        structurizer.saveStructure("ok");
+    //        trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
+    //
+    //    } else {
+    //        structurizer.structurize(elements);
+    //        structurizer.saveStructure();
+    //        trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
+    //    }
+    //    fl.closeDocument(doc);
+    //}
+
 
 })();

@@ -266,7 +266,14 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
         }
     }
 
-    if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
+    //TODO: add pivot point reding and assigning from child image in case of graphic
+    //      (scale, rotation and other properties should be read from graphic only)
+    if (element.libraryItem.itemType == "graphic"){
+
+    }
+
+
+        if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
         elementMetadata.alpha = element.colorAlphaPercent * 0.01;
     }
 };
@@ -351,16 +358,16 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
     var x = parseFloat(element.x.toFixed(2));
     var y = parseFloat(element.y.toFixed(2));
 
-    //var scaleX = parseFloat(element.scaleX.toFixed(4));
-    //var scaleY = parseFloat(element.scaleY.toFixed(4));
+    var scaleX = parseFloat(element.scaleX.toFixed(4));
+    var scaleY = parseFloat(element.scaleY.toFixed(4));
     //var skewX = parseFloat(degToRad(element.skewX).toFixed(4));
     //var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
-    //var rotation = parseFloat(degToRad(element.rotation.toFixed(4)));
+    var rotation = parseFloat(degToRad(element.rotation.toFixed(4)));
 
     var cos = Math.cos(degToRad(element.rotation));
     var sin = Math.sin(degToRad(element.rotation));
-    var pivotX = ((x * cos + y * sin) / element.scaleX).toFixed(4);
-    var pivotY = ((x * (-sin ) + y * cos) / element.scaleY).toFixed(4);
+    var pivotX = ((x * cos + y * sin) / element.scaleX).toFixed(2);
+    var pivotY = ((x * (-sin ) + y * cos) / element.scaleY).toFixed(2);
     if (pivotX != 0) {
         metadata.pivotX = pivotX;
     }
@@ -369,22 +376,22 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
         metadata.pivotY = pivotY;
     }
 
-    //if (scaleX != 1) {
-    //    metadata.scaleX = scaleX;
-    //}
-    //
-    //if (scaleY != 1) {
-    //    metadata.scaleY = scaleY;
-    //}
+    if (scaleX != 1) {
+        metadata.scaleX = scaleX;
+    }
 
-    //if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
-    //    metadata.skewX = skewX;
-    //    metadata.skewY = skewY;
-    //}
+    if (scaleY != 1) {
+        metadata.scaleY = scaleY;
+    }
 
-    //if (rotation != 0) {
-    //    metadata.rotation = rotation;
-    //}
+    if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
+        metadata.skewX = skewX;
+        metadata.skewY = skewY;
+    }
+
+    if (rotation != 0) {
+        metadata.rotation = rotation;
+    }
 
     return metadata;
 };

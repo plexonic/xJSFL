@@ -94,8 +94,11 @@ $p.createImageMetadata = function (item, metadata) {
 
         var frame = layer.frames[0];
         var elements = frame.elements;
-        var element = elements[0];
+        if(elements.length == 0){
+            continue;
+        }
 
+        var element = elements[0];
         var elementItem = element.libraryItem;
         $p.createExtractableImageGenericMetadata(element, metadata);
         metadata.libraryName = (new File(elementItem.name)).name;
@@ -355,14 +358,12 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
 };
 
 $p.createExtractableImageGenericMetadata = function (element, metadata) {
-    var x = parseFloat(element.x.toFixed(2));
-    var y = parseFloat(element.y.toFixed(2));
+    var x = element.x;
+    var y = element.y;
 
     var scaleX = parseFloat(element.scaleX.toFixed(4));
     var scaleY = parseFloat(element.scaleY.toFixed(4));
-    //var skewX = parseFloat(degToRad(element.skewX).toFixed(4));
-    //var skewY = parseFloat(degToRad(element.skewY).toFixed(4));
-    var rotation = parseFloat(degToRad(element.rotation.toFixed(4)));
+    var rotation = parseFloat(degToRad(element.rotation)).toFixed(4);
 
     var cos = Math.cos(degToRad(element.rotation));
     var sin = Math.sin(degToRad(element.rotation));
@@ -384,10 +385,10 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
         metadata.scaleY = scaleY;
     }
 
-    if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
-        metadata.skewX = skewX;
-        metadata.skewY = skewY;
-    }
+    //if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
+    //    metadata.skewX = skewX;
+    //    metadata.skewY = skewY;
+    //}
 
     if (rotation != 0) {
         metadata.rotation = rotation;

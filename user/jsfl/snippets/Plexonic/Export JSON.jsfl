@@ -94,7 +94,7 @@ $p.createImageMetadata = function (item, metadata) {
 
         var frame = layer.frames[0];
         var elements = frame.elements;
-        if(elements.length == 0){
+        if (elements.length == 0) {
             continue;
         }
 
@@ -271,12 +271,12 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
 
     //TODO: add pivot point reding and assigning from child image in case of graphic
     //      (scale, rotation and other properties should be read from graphic only)
-    if (element.libraryItem.itemType == "graphic"){
+    if (element.libraryItem.itemType == "graphic") {
 
     }
 
 
-        if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
+    if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
         elementMetadata.alpha = element.colorAlphaPercent * 0.01;
     }
 };
@@ -369,6 +369,8 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
     var sin = Math.sin(degToRad(element.rotation));
     var pivotX = ((x * cos + y * sin) / element.scaleX).toFixed(2);
     var pivotY = ((x * (-sin ) + y * cos) / element.scaleY).toFixed(2);
+    pivotX *= -1;
+    pivotY *= -1;
     if (pivotX != 0) {
         metadata.pivotX = pivotX;
     }

@@ -269,12 +269,11 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
         }
     }
 
-    //TODO: add pivot point reding and assigning from child image in case of graphic
+    //TODO: add pivot point reading and assigning from child image in case of graphic
     //      (scale, rotation and other properties should be read from graphic only)
     if (element.libraryItem.itemType == "graphic") {
 
     }
-
 
     if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
         elementMetadata.alpha = element.colorAlphaPercent * 0.01;

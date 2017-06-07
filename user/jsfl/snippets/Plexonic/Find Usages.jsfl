@@ -42,6 +42,7 @@ ELEMENT_TYPE_UNDEFINED = "undefined";
 
 ITEM_TYPE_BITMAP = "item_bitmap";
 ITEM_TYPE_SPRITE = "item_sprite";
+ITEM_TYPE_GRAPHIC = "item_graphic";
 ITEM_TYPE_FOLDER = "item_folder";
 ITEM_TYPE_FONT = "item_font";
 ITEM_TYPE_SOUND = "item_sound";
@@ -87,6 +88,9 @@ $p.getItemType = function (item) {
         case "movie clip":
             return ITEM_TYPE_SPRITE;
             break;
+        case "graphic":
+            return ITEM_TYPE_GRAPHIC;
+            break;
         case "sound":
             return ITEM_TYPE_SOUND;
             break;
@@ -122,7 +126,7 @@ $p.getElementType = function (element) {
 $p.getElements = function (item) {
     var elements = [];
     var type = this.getItemType(item);
-    if (item && type == ITEM_TYPE_SPRITE && item.timeline) {
+    if (item && (type == ITEM_TYPE_SPRITE || type == ITEM_TYPE_GRAPHIC) && item.timeline) {
         var layers = item.timeline.layers;
         var len = layers.length - 1;
         for (var i = len; i >= 0; --i) {
@@ -171,8 +175,8 @@ $p.getItemUsages = function (checkItem) {
     trace("------------------------------- SEARCHING");
     for (var i = 0, len = allItems.length; i < len; ++i) {
         var item = allItems[i];
-        var itemType = this.getItemType(item);
-        if (itemType == ITEM_TYPE_SPRITE && item != checkItem) {
+        var type = this.getItemType(item);
+        if ((type == ITEM_TYPE_SPRITE || type == ITEM_TYPE_GRAPHIC) && item != checkItem) {
             this.checkItemExistenceInside(item, checkItemName, checkItemType);
         }
     }
@@ -199,6 +203,11 @@ $p.checkItemExistenceInside = function (item, checkItemName, checkItemType) {
             if (checkItemName == element.libraryItem.name) {
                 ++this.foundCount;
                 trace("INSTANCE FOUND IN: " + item.name);
+            }
+        } else if (checkItemType == ITEM_TYPE_GRAPHIC && type == ELEMENT_TYPE_SYMBOL) {
+            if (checkItemName == element.libraryItem.name) {
+                ++this.foundCount;
+                trace("INSTANCE OF GRAPHIC FOUND IN: " + item.name);
             }
         }
     }

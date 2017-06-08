@@ -18,8 +18,9 @@ JsonStructurizer = function () {
 ELEMENT_TYPE_BITMAP = "element_bitmap";
 ELEMENT_TYPE_SYMBOL = "element_symbol";
 ELEMENT_TYPE_TEXTFIELD = "element_textfield";
+ELEMENT_TYPE_HITAREA = "element_hitarea";
 ELEMENT_TYPE_SHAPE = "element_shape";
-ELEMENT_TYPE_HITAREA_SHAPE = "element_hitarea_shape";
+ELEMENT_TYPE_POLYGON_SHAPE = "element_polygon_shape";
 ELEMENT_TYPE_UNDEFINED = "undefined";
 
 var $p = JsonStructurizer.prototype;
@@ -83,7 +84,19 @@ $p.getJsonUri = function (renameFilter) {
 };
 
 $p.createImageMetadata = function (item, metadata) {
+    var element = $p.getFistChild(item);
+    if (element == null) {
+        alert("No image found in Graphic.");
+        return;
+    }
 
+    var elementItem = element.libraryItem;
+    $p.createExtractableImageGenericMetadata(element, metadata);
+    metadata.libraryName = (new File(elementItem.name)).name;
+    return metadata;
+};
+
+$p.getFistChild = function (item) {
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
 
@@ -97,20 +110,14 @@ $p.createImageMetadata = function (item, metadata) {
         if (elements.length == 0) {
             continue;
         }
-
-        var element = elements[0];
-        var elementItem = element.libraryItem;
-        $p.createExtractableImageGenericMetadata(element, metadata);
-        metadata.libraryName = (new File(elementItem.name)).name;
-        return metadata;
+        return elements[0];
     }
 
-    alert("No image found in Graphic.");
+    return null;
 };
 
 $p.createMovieClipMetadata = function (item, metadata, image) {
     var q = 1;
-
 
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
@@ -156,7 +163,7 @@ $p.createMovieClipMetadata = function (item, metadata, image) {
                 for (var k = 0; k < elements.length; k++) {
                     var element = elements[k];
                     // do something with element
-                    // trace(item.name); traceing item name in case of error
+                    // trace(item.name); tracing item name in case of error
                     $p.createElementMetadata(element, layerObject.children, placeholder);
                 }
             }
@@ -192,15 +199,20 @@ $p.createElementMetadata = function (element, metadata, placeholder) {
             elementKind = "text";
             customMetadataSetter = $p.textFieldCustomMetadataSetter;
             break;
-        case ELEMENT_TYPE_HITAREA_SHAPE:
+        case ELEMENT_TYPE_POLYGON_SHAPE:
             elementName = element.name;
             elementKind = "hitarea";
-            customMetadataSetter = $p.hitAreaShapeCustomMetadataSetter;
+            customMetadataSetter = $p.polygonShapeCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_SHAPE:
             elementName = element.name;
             elementKind = "quad";
             customMetadataSetter = $p.shapeCustomMetadataSetter;
+            break;
+        case ELEMENT_TYPE_HITAREA:
+            elementName = element.name;
+            elementKind = "quad";
+            customMetadataSetter = $p.hitareaCustomMetadataSetter;
             break;
         default:
             //inspect(element);
@@ -218,7 +230,7 @@ $p.setElementSpecificMetadata = function (name, libraryName, kind, element, elem
     }
 };
 
-$p.hitAreaShapeCustomMetadataSetter = function (element, elementMetadata) {
+$p.polygonShapeCustomMetadataSetter = function (element, elementMetadata) {
     var vertices = [];
     var halfEdge = element.vertices[0].getHalfEdge();
     var startId = halfEdge.id;
@@ -236,9 +248,31 @@ $p.hitAreaShapeCustomMetadataSetter = function (element, elementMetadata) {
 
 $p.shapeCustomMetadataSetter = function (element, elementMetadata) {
     elementMetadata.color = $p.formatColor(element.contours[1].fill.color);
+
+    delete elementMetadata.scaleX;
+    delete elementMetadata.scaleY;
     elementMetadata.x = element.left;
     elementMetadata.y = element.top;
     $p.setElementWidthAndHeightMetadata(element, elementMetadata);
+};
+
+$p.hitareaCustomMetadataSetter = function (element, elementMetadata) {
+    elementMetadata.color = "0xfff";
+    delete elementMetadata.scaleX;
+    delete elementMetadata.scaleY;
+
+    var shape = $p.getFistChild(element.libraryItem);
+
+    if (shape.left != 0) {
+        elementMetadata.pivotX = parseFloat((-shape.left * element.scaleX).toFixed(2));
+    }
+
+    if (shape.top != 0) {
+        elementMetadata.pivotY = parseFloat((-shape.top * element.scaleY).toFixed(2));
+    }
+
+    $p.setElementWidthAndHeightMetadata(element, elementMetadata);
+
 };
 
 $p.formatColor = function (colorString) {
@@ -255,7 +289,7 @@ $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
         elementMetadata.alpha = element.colorAlphaPercent * 0.01;
     }
 
-    if(element.colorMode == "brightness" && element.brightness != 0){
+    if (element.colorMode == "brightness" && element.brightness != 0) {
         elementMetadata.brightness = element.brightness / 100;
     }
 
@@ -289,7 +323,7 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
 };
 
 $p.setImageFiltersMetadata = function (element, elementMetadata) {
-    if(element.colorMode == "brightness" && element.brightness != 0){
+    if (element.colorMode == "brightness" && element.brightness != 0) {
         elementMetadata.brightness = element.brightness / 100;
     }
 };
@@ -412,6 +446,11 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
     return metadata;
 };
 
+//we consider that shapes without fill are just polygonal shapes...
+$p.isPolygonShape = function (element) {
+    return element.contours[1].fill.color == null;
+};
+
 $p.createElementGenericMetadata = function (element) {
     var metadata = {};
 
@@ -477,13 +516,19 @@ function getElementType(element) {
             if (element.libraryItem.scalingGrid || element.libraryItem.itemType == "graphic") {
                 return ELEMENT_TYPE_BITMAP;
             }
+
+            if (element.name == "hitarea") {
+                return ELEMENT_TYPE_HITAREA;
+            }
+
             return ELEMENT_TYPE_SYMBOL;
             break;
+
         case undefined:
             if (element.toString() == "[object Text]") {
                 return ELEMENT_TYPE_TEXTFIELD;
             } else if (element.elementType == "shape") {
-                return isHitAreaType(element) ? ELEMENT_TYPE_HITAREA_SHAPE : ELEMENT_TYPE_SHAPE;
+                return $p.isPolygonShape(element) ? ELEMENT_TYPE_POLYGON_SHAPE : ELEMENT_TYPE_SHAPE;
             }
             return ELEMENT_TYPE_UNDEFINED;
             break;
@@ -491,10 +536,6 @@ function getElementType(element) {
     return null;
 }
 
-//we consider that shapes without fill are just hit areas...
-function isHitAreaType(element) {
-    return element.contours[1].fill.color == null;
-}
 
 (function () {
     xjsfl.init(this);
@@ -522,7 +563,7 @@ function isHitAreaType(element) {
         alert("EXPORT COMPLETE");
     }
 
-    //var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
+    //var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/";
     //var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
     //
     //for (var k = 0; k < fileList.length; ++k) {

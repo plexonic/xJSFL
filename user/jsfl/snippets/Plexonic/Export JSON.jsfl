@@ -254,6 +254,11 @@ $p.symbolCustomMetadataSetter = function (element, elementMetadata) {
     if (element.colorAlphaPercent != 100) {
         elementMetadata.alpha = element.colorAlphaPercent * 0.01;
     }
+
+    if(element.colorMode == "brightness" && element.brightness != 0){
+        elementMetadata.brightness = element.brightness / 100;
+    }
+
     elementMetadata.layers = $p.createMovieClipMetadata(element.libraryItem, []);
 };
 
@@ -277,6 +282,15 @@ $p.imageCustomMetadataSetter = function (element, elementMetadata) {
 
     if (!isNaN(element.colorAlphaPercent) && element.colorAlphaPercent != 100) {
         elementMetadata.alpha = element.colorAlphaPercent * 0.01;
+    }
+
+    $p.setImageFiltersMetadata(element, elementMetadata);
+
+};
+
+$p.setImageFiltersMetadata = function (element, elementMetadata) {
+    if(element.colorMode == "brightness" && element.brightness != 0){
+        elementMetadata.brightness = element.brightness / 100;
     }
 };
 

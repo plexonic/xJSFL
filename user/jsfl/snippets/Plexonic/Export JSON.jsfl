@@ -408,16 +408,26 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
     var x = element.x;
     var y = element.y;
 
-    var scaleX = parseFloat(element.scaleX.toFixed(4));
-    var scaleY = parseFloat(element.scaleY.toFixed(4));
+    var scaleX = element.scaleX;
+    var scaleY = element.scaleY;
     var rotation = parseFloat(degToRad(element.rotation)).toFixed(4);
+    var skewX = element.skewX;
+    var skewY = element.skewY;
+
+    //we are applying a workaround, as setying scale to -100 in Flash, sets the value to 180 deg skew
+    if (skewY == 180) {
+        scaleX *= -1;
+    }
+
+    if (skewX == 180) {
+        scaleY *= -1;
+    }
 
     var cos = Math.cos(degToRad(element.rotation));
     var sin = Math.sin(degToRad(element.rotation));
-    var pivotX = ((x * cos + y * sin) / element.scaleX).toFixed(2);
-    var pivotY = ((x * (-sin ) + y * cos) / element.scaleY).toFixed(2);
-    pivotX *= -1;
-    pivotY *= -1;
+    var pivotX = -1 * ((x * cos + y * sin) / scaleX).toFixed(2);
+    var pivotY = -1 * ((x * (-sin ) + y * cos) / scaleY).toFixed(2);
+
     if (pivotX != 0) {
         metadata.pivotX = pivotX;
     }
@@ -426,6 +436,10 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
         metadata.pivotY = pivotY;
     }
 
+    scaleX = parseFloat(scaleX.toFixed(4));
+    scaleY = parseFloat(scaleY.toFixed(4));
+
+
     if (scaleX != 1) {
         metadata.scaleX = scaleX;
     }
@@ -433,11 +447,6 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
     if (scaleY != 1) {
         metadata.scaleY = scaleY;
     }
-
-    //if ((skewX != 0 || skewY != 0) && (Math.abs(skewX - skewY) >= 0.001)) {
-    //    metadata.skewX = skewX;
-    //    metadata.skewY = skewY;
-    //}
 
     if (rotation != 0) {
         metadata.rotation = rotation;

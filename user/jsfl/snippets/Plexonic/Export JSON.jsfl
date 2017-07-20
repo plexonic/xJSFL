@@ -92,7 +92,7 @@ $p.createImageMetadata = function (item, metadata) {
 
     var elementItem = element.libraryItem;
     $p.createExtractableImageGenericMetadata(element, metadata);
-    metadata.libraryName = (new File(elementItem.name)).name;
+    metadata.libraryName = (new File(elementItem.name)).name.replace("@", "/");
     return metadata;
 };
 
@@ -335,7 +335,7 @@ $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
     }
 
     if (libraryName != "") {
-        elementMetadata.libraryName = libraryName;
+        elementMetadata.libraryName = libraryName.replace("@", "/");
     }
 
     elementMetadata.kind = kind;

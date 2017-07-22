@@ -389,18 +389,37 @@ $p.formatFilterQuality = function (quality) {
 };
 
 $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
-    elementMetadata.bold = textAttrs.bold;
-    elementMetadata.italic = textAttrs.italic;
 
-    elementMetadata.fontFamily = textAttrs.face;
     if (elementMetadata.bold == true && textAttrs.face.indexOf(" Bold") == -1) {
-        elementMetadata.fontFamily += " Bold";
+        elementMetadata.fontName += " Bold";
+    } else {
+        elementMetadata.fontName = textAttrs.face;
+    }
+
+    if (textAttrs.bold == true) {
+        elementMetadata.bold = textAttrs.bold;
+    }
+
+    if (textAttrs.italic == true) {
+        elementMetadata.italic = textAttrs.italic;
+    }
+
+    if (textAttrs.underline == true) {
+        elementMetadata.italic = textAttrs.italic;
     }
 
     elementMetadata.color = $p.formatColor(textAttrs.fillColor);
     elementMetadata.size = textAttrs.size;
-    elementMetadata.leading = textAttrs.lineSpacing;
-    elementMetadata.alignment = textAttrs.alignment;
+    elementMetadata.hAlign = textAttrs.alignment;
+
+    if (textAttrs.lineSpacing != 0) {
+        elementMetadata.leading = textAttrs.lineSpacing;
+    }
+
+    if (textAttrs.letterSpacing != 0) {
+        elementMetadata.letterSpacing = textAttrs.letterSpacing;
+    }
+
 
 };
 
@@ -550,58 +569,61 @@ function getElementType(element) {
     xjsfl.init(this);
     structurizer = new JsonStructurizer();
 
-    var elements = $$("ext_*").elements;
-    var fbOkMode = false;
-    for (var i = 0, len = elements.length; i < len; ++i) {
-        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
-            fbOkMode = true;
-            break;
-        }
+    ////////////////////////////////////////////////////////////////////////////////////
+    // var elements = $$("ext_*").elements;
+    // var fbOkMode = false;
+    // for (var i = 0, len = elements.length; i < len; ++i) {
+    //     if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+    //         fbOkMode = true;
+    //         break;
+    //     }
+    // }
+    //
+    // if (fbOkMode) {
+    //     structurizer.structurize(elements, "ok", "fb");
+    //     structurizer.saveStructure("fb");
+    //
+    //     structurizer.structurize(elements, "fb", "ok");
+    //     structurizer.saveStructure("ok");
+    //     alert("EXPORT COMPLETE\nFB & OK");
+    // } else {
+    //     structurizer.structurize(elements);
+    //     structurizer.saveStructure();
+    //     alert("EXPORT COMPLETE");
+    // }
+    ////////////////////////////////////////////////////////////////////////////////////
+
+
+    var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/";
+    var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
+
+    for (var k = 0; k < fileList.length; ++k) {
+       var doc = fl.openDocument(flaFolder + fileList[k]);
+
+       var elements = $$("ext_*").elements;
+       var fbOkMode = false;
+       for (var i = 0, len = elements.length; i < len; ++i) {
+           if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+               fbOkMode = true;
+               break;
+           }
+       }
+
+       if (fbOkMode) {
+           structurizer.structurize(elements, "ok", "fb");
+           structurizer.saveStructure("fb");
+
+           structurizer.structurize(elements, "fb", "ok");
+           structurizer.saveStructure("ok");
+           trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
+
+       } else {
+           structurizer.structurize(elements);
+           structurizer.saveStructure();
+           trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
+       }
+       fl.closeDocument(doc);
     }
-
-    if (fbOkMode) {
-        structurizer.structurize(elements, "ok", "fb");
-        structurizer.saveStructure("fb");
-
-        structurizer.structurize(elements, "fb", "ok");
-        structurizer.saveStructure("ok");
-        alert("EXPORT COMPLETE\nFB & OK");
-    } else {
-        structurizer.structurize(elements);
-        structurizer.saveStructure();
-        alert("EXPORT COMPLETE");
-    }
-
-    //var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/";
-    //var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
-    //
-    //for (var k = 0; k < fileList.length; ++k) {
-    //    var doc = fl.openDocument(flaFolder + fileList[k]);
-    //
-    //    var elements = $$("ext_*").elements;
-    //    var fbOkMode = false;
-    //    for (var i = 0, len = elements.length; i < len; ++i) {
-    //        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
-    //            fbOkMode = true;
-    //            break;
-    //        }
-    //    }
-    //
-    //    if (fbOkMode) {
-    //        structurizer.structurize(elements, "ok", "fb");
-    //        structurizer.saveStructure("fb");
-    //
-    //        structurizer.structurize(elements, "fb", "ok");
-    //        structurizer.saveStructure("ok");
-    //        trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
-    //
-    //    } else {
-    //        structurizer.structurize(elements);
-    //        structurizer.saveStructure();
-    //        trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
-    //    }
-    //    fl.closeDocument(doc);
-    //}
 
 
 })();

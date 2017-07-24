@@ -28,7 +28,7 @@ $p.dummyFolder = "";
 $p.depth = 0;
 $p.rootFolder = "_structures/";
 $p.structureJson = "";
-
+$p.currentItem = null;
 
 $p.structurize = function (selectedItems, skipFilter, renameFilter) {
     var documentMetadata = {};
@@ -46,7 +46,6 @@ $p.structurize = function (selectedItems, skipFilter, renameFilter) {
             $p.createImageMetadata(item, itemMetadata.image);
         }
         else {
-            //itemMetadata.libraryName = renameFilter != null ? $p.getProcessedName(item.name, "_" + renameFilter + "_") : item.name;
             itemMetadata.layers = [];
             $p.createMovieClipMetadata(item, itemMetadata.layers);
         }
@@ -150,11 +149,7 @@ $p.createMovieClipMetadata = function (item, metadata, image) {
 
         layerObject.children = [];
 
-        var placeholder = false;
-        if (layer.name[0] == '*') {
-            placeholder = true;
-            alert(1);
-        }
+        $p.currentItem = item;
 
         for (var j = 0; j < layer.frames.length; j++) {
             var frame = layer.frames[j];
@@ -163,8 +158,8 @@ $p.createMovieClipMetadata = function (item, metadata, image) {
                 for (var k = 0; k < elements.length; k++) {
                     var element = elements[k];
                     // do something with element
-                    // trace(item.name); tracing item name in case of error
-                    $p.createElementMetadata(element, layerObject.children, placeholder);
+                    // trace(item.name); //tracing item name in case of error
+                    $p.createElementMetadata(element, layerObject.children);
                 }
             }
         }
@@ -174,7 +169,7 @@ $p.createMovieClipMetadata = function (item, metadata, image) {
     return metadata;
 };
 
-$p.createElementMetadata = function (element, metadata, placeholder) {
+$p.createElementMetadata = function (element, metadata) {
     var elementItem = element.libraryItem;
     var elementMetadata = $p.createElementGenericMetadata(element);
     var elementName = "";
@@ -192,7 +187,7 @@ $p.createElementMetadata = function (element, metadata, placeholder) {
         case ELEMENT_TYPE_SYMBOL:
             elementName = element.name;
             elementKind = "sprite";
-            customMetadataSetter = placeholder ? null : $p.symbolCustomMetadataSetter;
+            customMetadataSetter = $p.symbolCustomMetadataSetter;
             break;
         case ELEMENT_TYPE_TEXTFIELD:
             elementName = element.name;
@@ -476,7 +471,21 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
 
 //we consider that shapes without fill are just polygonal shapes...
 $p.isPolygonShape = function (element) {
-    return element.contours[1].fill.color == null;
+    if (element.contours[1].fill.color == null) {
+
+        if (element.isRectangleObject) {
+            alert("ERROR ERROR ERROR ERROR ERROR ERROR ERROR\n\n" + "9 Slice is broken\n" + $p.currentItem.name);
+        }
+
+        if (element.contours[1].interior == false) {
+            alert("ERROR ERROR ERROR ERROR ERROR ERROR ERROR\n\n" + element.libraryName + " is a polygon shape that is not INTERIOR.");
+            return false
+        }
+        return true;
+    }
+
+
+    return false;
 };
 
 $p.createElementGenericMetadata = function (element) {

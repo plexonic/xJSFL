@@ -472,7 +472,7 @@ $p.createExtractableImageGenericMetadata = function (element, metadata) {
 //we consider that shapes without fill are just polygonal shapes...
 $p.isPolygonShape = function (element) {
     if (element.contours[1].fill.color == null) {
-        if (element.isDrawingObject) {
+        if (element.isDrawingObject || element.isRectangleObject) {
             alert("ERROR ERROR ERROR ERROR ERROR ERROR ERROR\n\n" + "9 Slice is broken\n" + $p.currentItem.name);
         }
 

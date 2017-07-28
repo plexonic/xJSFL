@@ -83,7 +83,7 @@ $p.getJsonUri = function (renameFilter) {
 };
 
 $p.createImageMetadata = function (item, metadata) {
-    var element = $p.getFistChild(item);
+    var element = $p.getFirstChild(item);
     if (element == null) {
         alert("No image found in Graphic.");
         return;
@@ -95,7 +95,7 @@ $p.createImageMetadata = function (item, metadata) {
     return metadata;
 };
 
-$p.getFistChild = function (item) {
+$p.getFirstChild = function (item) {
     for (var i = 0; i < item.timeline.layers.length; i++) {
         var layer = item.timeline.layers[i];
 
@@ -256,7 +256,7 @@ $p.hitareaCustomMetadataSetter = function (element, elementMetadata) {
     delete elementMetadata.scaleX;
     delete elementMetadata.scaleY;
 
-    var shape = $p.getFistChild(element.libraryItem);
+    var shape = $p.getFirstChild(element.libraryItem);
 
     if (shape.left != 0) {
         elementMetadata.pivotX = parseFloat((-shape.left * element.scaleX).toFixed(2));

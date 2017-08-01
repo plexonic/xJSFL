@@ -384,15 +384,14 @@ $p.formatFilterQuality = function (quality) {
 };
 
 $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
-
-    if (elementMetadata.bold == true && textAttrs.face.indexOf(" Bold") == -1) {
-        elementMetadata.fontName += " Bold";
-    } else {
-        elementMetadata.fontName = textAttrs.face;
-    }
-
     if (textAttrs.bold == true) {
         elementMetadata.bold = textAttrs.bold;
+    }
+
+    if (elementMetadata.bold == true && textAttrs.face.indexOf(" Bold") == -1) {
+        elementMetadata.fontName = textAttrs.face + " Bold";
+    } else {
+        elementMetadata.fontName = textAttrs.face;
     }
 
     if (textAttrs.italic == true) {
@@ -414,8 +413,6 @@ $p.setTextFieldAttrsMetadata = function (textAttrs, elementMetadata) {
     if (textAttrs.letterSpacing != 0) {
         elementMetadata.letterSpacing = textAttrs.letterSpacing;
     }
-
-
 };
 
 $p.createExtractableImageGenericMetadata = function (element, metadata) {

@@ -338,6 +338,10 @@ $p.setElementNameAndKind = function (name, libraryName, kind, elementMetadata) {
 
 $p.textFieldCustomMetadataSetter = function (element, elementMetadata) {
     var textRun = element.textRuns[0];
+
+    if(element.lineType != "multiline"){
+        elementMetadata.wordWrap = false;
+    }
     var textAttrs = textRun.textAttrs;
     $p.setElementWidthAndHeightMetadata(element, elementMetadata);
     elementMetadata.characters = textRun.characters;

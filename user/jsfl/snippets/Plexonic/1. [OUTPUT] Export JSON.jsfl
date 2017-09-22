@@ -602,8 +602,8 @@ function getElementType(element) {
     }
     ////////////////////////////////////////////////////////////////////////////////////
 
-
-    // var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
+    // var flaFolder = "file:///D|/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/"
+    // // var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
     // var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
     //
     // for (var k = 0; k < fileList.length; ++k) {

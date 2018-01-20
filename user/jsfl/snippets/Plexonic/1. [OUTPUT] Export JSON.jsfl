@@ -634,60 +634,60 @@ function getElementType(element) {
     structurizer = new JsonStructurizer();
 
     ////////////////////////////////////////////////////////////////////////////////////
-    // var elements = $$("ext_*").elements;
-    // var fbOkMode = false;
-    // for (var i = 0, len = elements.length; i < len; ++i) {
-    //     if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
-    //         fbOkMode = true;
-    //         break;
-    //     }
-    // }
-    //
-    // if (fbOkMode) {
-    //     structurizer.structurize(elements, "ok", "fb");
-    //     structurizer.saveStructure("fb");
-    //
-    //     structurizer.structurize(elements, "fb", "ok");
-    //     structurizer.saveStructure("ok");
-    //     alert("EXPORT COMPLETE\nFB & OK");
-    // } else {
-    //     structurizer.structurize(elements);
-    //     structurizer.saveStructure();
-    //     alert("EXPORT COMPLETE");
-    // }
+    var elements = $$("ext_*").elements;
+    var fbOkMode = false;
+    for (var i = 0, len = elements.length; i < len; ++i) {
+        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+            fbOkMode = true;
+            break;
+        }
+    }
+
+    if (fbOkMode) {
+        structurizer.structurize(elements, "ok", "fb");
+        structurizer.saveStructure("fb");
+
+        structurizer.structurize(elements, "fb", "ok");
+        structurizer.saveStructure("ok");
+        alert("EXPORT COMPLETE\nFB & OK");
+    } else {
+        structurizer.structurize(elements);
+        structurizer.saveStructure();
+        alert("EXPORT COMPLETE");
+    }
     ////////////////////////////////////////////////////////////////////////////////////
 
-    var flaFolder = "file:///D|/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/";
-    // var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
-    var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
-
-    for (var k = 0; k < fileList.length; ++k) {
-       var doc = fl.openDocument(flaFolder + fileList[k]);
-
-       var elements = $$("ext_*").elements;
-       var fbOkMode = false;
-       for (var i = 0, len = elements.length; i < len; ++i) {
-           if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
-               fbOkMode = true;
-               break;
-           }
-       }
-
-       if (fbOkMode) {
-           structurizer.structurize(elements, "ok", "fb");
-           structurizer.saveStructure("fb");
-
-           structurizer.structurize(elements, "fb", "ok");
-           structurizer.saveStructure("ok");
-           trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
-
-       } else {
-           structurizer.structurize(elements);
-           structurizer.saveStructure();
-           trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
-       }
-       fl.closeDocument(doc);
-    }
+    // var flaFolder = "file:///D|/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
+    // // var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
+    // var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
+    //
+    // for (var k = 0; k < fileList.length; ++k) {
+    //    var doc = fl.openDocument(flaFolder + fileList[k]);
+    //
+    //    var elements = $$("ext_*").elements;
+    //    var fbOkMode = false;
+    //    for (var i = 0, len = elements.length; i < len; ++i) {
+    //        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+    //            fbOkMode = true;
+    //            break;
+    //        }
+    //    }
+    //
+    //    if (fbOkMode) {
+    //        structurizer.structurize(elements, "ok", "fb");
+    //        structurizer.saveStructure("fb");
+    //
+    //        structurizer.structurize(elements, "fb", "ok");
+    //        structurizer.saveStructure("ok");
+    //        trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
+    //
+    //    } else {
+    //        structurizer.structurize(elements);
+    //        structurizer.saveStructure();
+    //        trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
+    //    }
+    //    fl.closeDocument(doc);
+    // }
 
 
 })();

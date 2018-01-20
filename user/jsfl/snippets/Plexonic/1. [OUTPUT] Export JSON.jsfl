@@ -23,6 +23,8 @@ ELEMENT_TYPE_SHAPE = "element_shape";
 ELEMENT_TYPE_POLYGON_SHAPE = "element_polygon_shape";
 ELEMENT_TYPE_UNDEFINED = "undefined";
 
+var ASPECT_RATIO_SUFFIXES = ["2_3", "3_4", "4_3", "9_16", "9_19"];
+
 var $p = JsonStructurizer.prototype;
 $p.dummyFolder = "";
 $p.depth = 0;
@@ -32,16 +34,22 @@ $p.currentItem = null;
 
 $p.structurize = function (selectedItems, skipFilter, renameFilter) {
     var documentMetadata = {};
+	var itemMetadata;
+	var processedName;
+	var baseItemName;
+	var aspectRatio;
+
+	var ratioEnabledItemNames = $p.getItemsNameRatioMap(selectedItems, skipFilter, renameFilter);
+
     for each (var item in selectedItems) {
-        if (skipFilter != null && item.name.indexOf("ext_" + skipFilter + "_") != -1) {
+	    if ($p.isItemSkipped(item.name, skipFilter)) {
             continue;
         }
 
-        var itemMetadata = {};
-        var processedName = skipFilter != null && renameFilter != null ? $p.getProcessedName(item.itemName, "_" + renameFilter + "_") : item.itemName;
-        documentMetadata[processedName] = itemMetadata;
+	    itemMetadata = {};
+        processedName = $p.getProcessedName(item.itemName, renameFilter, skipFilter);
 
-        if (item.itemType == "graphic") {
+        if (item.itemType === "graphic") {
             itemMetadata.image = {};
             $p.createImageMetadata(item, itemMetadata.image);
         }
@@ -50,12 +58,59 @@ $p.structurize = function (selectedItems, skipFilter, renameFilter) {
             $p.createMovieClipMetadata(item, itemMetadata.layers);
         }
 
+	    aspectRatio = ratioEnabledItemNames[processedName];
+        if (!aspectRatio) {
+	        documentMetadata[processedName] = itemMetadata;
+        }
+        else {
+            baseItemName = aspectRatio !== "base" ? processedName.substr(0, processedName.indexOf(aspectRatio) - 1) : processedName;
+            documentMetadata[baseItemName] = documentMetadata[baseItemName] || {};
+            documentMetadata[baseItemName].multi = true;
+            documentMetadata[baseItemName][aspectRatio] = itemMetadata;
+        }
     }
+
     $p.structureJson = JSON.formatJson(JSON.encode(documentMetadata));
 };
 
-$p.getProcessedName = function (name, stringToReplace) {
-    return name.split(stringToReplace).join("_");
+$p.getItemsNameRatioMap = function(items, skipFilter, renameFilter) {
+	var itemName;
+	var baseItemName;
+	var names = {};
+	var aspectRatiosCount = ASPECT_RATIO_SUFFIXES.length;
+	var aspectRatio;
+
+	for each(var item in items) {
+	    if ($p.isItemSkipped(item.name, skipFilter)) {
+	        continue;
+        }
+
+		itemName = $p.getProcessedName(item.itemName, renameFilter, skipFilter);
+
+        for (var i = 0; i < aspectRatiosCount; i++) {
+	        aspectRatio = ASPECT_RATIO_SUFFIXES[i];
+            if (itemName.indexOf(aspectRatio) !== -1) {
+                baseItemName = itemName.substr(0, itemName.indexOf(aspectRatio) - 1);
+                if (!names[baseItemName]) {
+                    names[baseItemName] = "base";
+                }
+                names[itemName] = aspectRatio;
+            }
+        }
+    }
+
+    return names;
+};
+
+$p.isItemSkipped = function(name, skipFilter) {
+    return skipFilter && name.indexOf("ext_" + skipFilter + "_") !== -1;
+};
+
+$p.getProcessedName = function (name, renameFilter, skipFilter) {
+    if (skipFilter && renameFilter) {
+	    return name.split("_" + renameFilter + "_").join("_");
+    }
+    return name;
 };
 
 $p.saveStructure = function (renameFilter) {
@@ -579,60 +634,60 @@ function getElementType(element) {
     structurizer = new JsonStructurizer();
 
     ////////////////////////////////////////////////////////////////////////////////////
-    var elements = $$("ext_*").elements;
-    var fbOkMode = false;
-    for (var i = 0, len = elements.length; i < len; ++i) {
-        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
-            fbOkMode = true;
-            break;
-        }
-    }
-
-    if (fbOkMode) {
-        structurizer.structurize(elements, "ok", "fb");
-        structurizer.saveStructure("fb");
-
-        structurizer.structurize(elements, "fb", "ok");
-        structurizer.saveStructure("ok");
-        alert("EXPORT COMPLETE\nFB & OK");
-    } else {
-        structurizer.structurize(elements);
-        structurizer.saveStructure();
-        alert("EXPORT COMPLETE");
-    }
+    // var elements = $$("ext_*").elements;
+    // var fbOkMode = false;
+    // for (var i = 0, len = elements.length; i < len; ++i) {
+    //     if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+    //         fbOkMode = true;
+    //         break;
+    //     }
+    // }
+    //
+    // if (fbOkMode) {
+    //     structurizer.structurize(elements, "ok", "fb");
+    //     structurizer.saveStructure("fb");
+    //
+    //     structurizer.structurize(elements, "fb", "ok");
+    //     structurizer.saveStructure("ok");
+    //     alert("EXPORT COMPLETE\nFB & OK");
+    // } else {
+    //     structurizer.structurize(elements);
+    //     structurizer.saveStructure();
+    //     alert("EXPORT COMPLETE");
+    // }
     ////////////////////////////////////////////////////////////////////////////////////
 
-    // var flaFolder = "file:///D|/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/"
-    // // var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
-    // var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
-    //
-    // for (var k = 0; k < fileList.length; ++k) {
-    //    var doc = fl.openDocument(flaFolder + fileList[k]);
-    //
-    //    var elements = $$("ext_*").elements;
-    //    var fbOkMode = false;
-    //    for (var i = 0, len = elements.length; i < len; ++i) {
-    //        if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
-    //            fbOkMode = true;
-    //            break;
-    //        }
-    //    }
-    //
-    //    if (fbOkMode) {
-    //        structurizer.structurize(elements, "ok", "fb");
-    //        structurizer.saveStructure("fb");
-    //
-    //        structurizer.structurize(elements, "fb", "ok");
-    //        structurizer.saveStructure("ok");
-    //        trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
-    //
-    //    } else {
-    //        structurizer.structurize(elements);
-    //        structurizer.saveStructure();
-    //        trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
-    //    }
-    //    fl.closeDocument(doc);
-    // }
+    var flaFolder = "file:///D|/Projects/dev/as/plexonic/games/meln-mobile/media/fla/mobile/";
+    // var flaFolder = "file:///Macintosh%20HD/Users/gevorg.sargsyan/Projects/dev/as/plexonic/games/meln-mobile/media/fla/web/";
+    var fileList = FLfile.listFolder(flaFolder + "*.fla", "files");
+
+    for (var k = 0; k < fileList.length; ++k) {
+       var doc = fl.openDocument(flaFolder + fileList[k]);
+
+       var elements = $$("ext_*").elements;
+       var fbOkMode = false;
+       for (var i = 0, len = elements.length; i < len; ++i) {
+           if (elements[i].itemName.indexOf("_fb_") != -1 || elements[i].itemName.indexOf("_ok_") != -1) {
+               fbOkMode = true;
+               break;
+           }
+       }
+
+       if (fbOkMode) {
+           structurizer.structurize(elements, "ok", "fb");
+           structurizer.saveStructure("fb");
+
+           structurizer.structurize(elements, "fb", "ok");
+           structurizer.saveStructure("ok");
+           trace("EXPORT COMPLETE\nFB & OK - " + flaFolder + fileList[k]);
+
+       } else {
+           structurizer.structurize(elements);
+           structurizer.saveStructure();
+           trace("EXPORT COMPLETE - " + flaFolder + fileList[k]);
+       }
+       fl.closeDocument(doc);
+    }
 
 
 })();

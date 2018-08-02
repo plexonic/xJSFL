@@ -89,8 +89,9 @@ $p.getItemsNameRatioMap = function(items, skipFilter, renameFilter) {
 
         for (var i = 0; i < aspectRatiosCount; i++) {
 	        aspectRatio = ASPECT_RATIO_SUFFIXES[i];
-            if (itemName.indexOf(aspectRatio) !== -1) {
-                baseItemName = itemName.substr(0, itemName.indexOf(aspectRatio) - 1);
+	        var itemAspectRatio = itemName.substr(-1 * (aspectRatio.length), aspectRatio.length);
+            if (itemAspectRatio === aspectRatio) {
+                baseItemName = itemName.substr(0, itemName.length - aspectRatio.length);
                 if (!names[baseItemName]) {
                     names[baseItemName] = "base";
                 }
